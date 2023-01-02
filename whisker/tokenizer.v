@@ -57,7 +57,7 @@ fn extract_lines(input string) !InputLines {
 
 fn (input_lines InputLines) validate_line_lengths() ! {
 	for index, line in input_lines.lines {
-		if line.len > max_line_length {
+		if line.len > whisker.max_line_length {
 			return error('Line ${index + 1} is larger than maximum allowed length (${200}).')
 		}
 	}
@@ -141,7 +141,7 @@ enum TokenizerState {
 
 struct Tokenizer {
 mut:
-	buffer                 strings.Builder = strings.new_builder(max_line_length)
+	buffer                 strings.Builder = strings.new_builder(whisker.max_line_length)
 	tokens                 []Token = []Token{cap: 256}
 	delim_left             string  = '{{'
 	delim_right            string  = '}}'
@@ -285,7 +285,7 @@ fn (mut tokenizer Tokenizer) accept(input u8) ! {
 			if input in [` `, `\t`] {
 				// Encountered a whitespace.
 				if tokenizer.swap_padding_skipped {
-					// This means the opening delimiter  string is complete.
+					// This means the opening delimiter string is complete.
 					tokenizer.delim_left = tokenizer.buffer.str()
 					tokenizer.buffer.clear()
 					tokenizer.set_state(.active_delim_swap_break)
@@ -439,7 +439,9 @@ fn (mut tokenizer Tokenizer) accept(input u8) ! {
 fn (mut tokenizer Tokenizer) tokenize(input_lines InputLines) ! {
 	for line in input_lines.lines {
 		indent := extract_indentation(line)
-		if indent.len > 0 && tokenizer.current_state == .normal {
+		dump(line)
+		dump(tokenizer.current_state)
+		if indent.len > 0 {
 			tokenizer.tokens << Token{
 				content: indent
 				token_type: .indent
@@ -464,21 +466,47 @@ fn (mut tokenizer Tokenizer) tokenize(input_lines InputLines) ! {
 				}
 			}
 			.delim_right_started {
-				// The closing delimiter just ended on the last character
-				// if tokenizer.previous_state != .active_comment_tag {
-				// 	tokenizer.tokens << Token{
-				// 		token_type: .tag
-				// 		content: tokenizer.buffer.str()
-				// 	}
-				// 	tokenizer.buffer.clear()
-				// }
+				match tokenizer.previous_state {
+					.active_comment_tag {
+						// Skip the line ending if we've just finished a comment
+						tokenizer.tokens << Token{
+							content: ''
+							token_type: .comment
+						}
+					}
+					.active_delim_swap_right {
+						tokenizer.delim_right = tokenizer.incoming_closing_delim
+						tokenizer.tokens << Token{
+							token_type: .delim_right
+							content: tokenizer.delim_right
+						}
+						tokenizer.buffer.clear()
+						tokenizer.tokens << Token{
+							token_type: .newline
+							content: input_lines.newline
+						}
+						tokenizer.set_state(.normal)
+					}
+					else {
+						tokenizer.tokens << Token{
+							token_type: .delim_right
+							content: tokenizer.delim_right
+						}
+						tokenizer.buffer.clear()
+						tokenizer.tokens << Token{
+							token_type: .newline
+							content: input_lines.newline
+						}
+						tokenizer.set_state(.normal)
+					}
+				}
 			}
 			.active_comment_tag {
 				// Continue processing
 			}
 			else {
 				println(tokenizer)
-				return error('Tokenizer in an invalid state.')
+				return error('Tokenizer in an invalid state: ${tokenizer}')
 			}
 		}
 	}
@@ -516,6 +544,7 @@ fn (mut tokenizer Tokenizer) simplify_token_list() ! {
 
 	// Remove comments and indented comment blocks
 	mut comment_free_tokens := []Token{cap: simplified_tokens.len}
+	dump(simplified_tokens)
 	for index, token in simplified_tokens {
 		match token.token_type {
 			.indent {
@@ -534,7 +563,7 @@ fn (mut tokenizer Tokenizer) simplify_token_list() ! {
 	}
 
 	// Concatenate consecutive normal tokens
-	mut normal_buffer := strings.new_builder(max_line_length)
+	mut normal_buffer := strings.new_builder(whisker.max_line_length)
 	mut concatenated_tokens := []Token{cap: comment_free_tokens.len}
 	for token in comment_free_tokens {
 		match token.token_type {
@@ -562,4 +591,3 @@ fn (mut tokenizer Tokenizer) simplify_token_list() ! {
 
 	tokenizer.tokens = concatenated_tokens
 }
-

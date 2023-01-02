@@ -3,10 +3,11 @@ module spec
 import whisker
 
 pub const comment_tests = TestList{
+	name: 'Comments'
 	overview: "
 Comment tags represent content that should never appear in the resulting output.
 
-The tag's content may contain any sequence of characters (including 
+The tag's content may contain any sequence of characters (including
 whitespace and newlines) except the active closing delimiter.
 
 Comment tags can act as standalone tags (taking up a line, indented, etc).
