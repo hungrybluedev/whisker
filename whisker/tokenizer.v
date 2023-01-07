@@ -418,6 +418,7 @@ fn extract_indentation(line string) string {
 	}
 	return indent_buffer.str()
 }
+
 fn validate_indentation(lines []string) ! {
 	mut space_count, mut tab_count := 0, 0
 	for line in lines {
@@ -493,6 +494,9 @@ fn flatten_lines(lines []TokenLine, line_ending string) []Token {
 			simple_line << token
 		}
 
+		// Check for standalone comment and section tags.
+		// The idea is that they are completely removed if they are not inline
+		// and the indentation and newlines do not persist.
 		if simple_line.len > 0 && simple_line.last().token_type !in [.normal, .tag] {
 			if simple_line.len == 2 && simple_line.first().content.trim_space().len == 0 {
 				simple_line.delete(0)
@@ -501,6 +505,7 @@ fn flatten_lines(lines []TokenLine, line_ending string) []Token {
 				add_newline = false
 			} else {
 				// It is inline
+				add_newline = true
 			}
 		} else {
 			add_newline = true
