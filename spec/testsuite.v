@@ -13,7 +13,7 @@ pub:
 
 pub struct TestList {
 pub:
-	name string
+	name     string
 	overview string
 	tests    []TestCase
 }
