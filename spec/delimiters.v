@@ -40,8 +40,27 @@ Delimiter swap tags can be standalone tags.
 				'section': DataModel(true)
 				'data':    'I got interpolated.'
 			}
-			template: '[\n{{#+section}}\n  {{data}}\n  |data|\n{{/section}}\n\n{{= | | =}}\n|#+section|\n  {{data}}\n  |data|\n|/section|\n]\n'
-			expected: '[\n  I got interpolated.\n  |data|\n\n  {{data}}\n  I got interpolated.\n]\n'
+			template: '
+[
+{{+section}}
+	{{data}}
+	|data|
+{{/section}}
+{{= | | =}}
+|+section|
+	{{data}}
+	|data|
+|/section|
+]
+'
+			expected: '
+[
+	I got interpolated.
+	|data|
+	{{data}}
+	I got interpolated.
+]
+'
 		},
 	]
 }
