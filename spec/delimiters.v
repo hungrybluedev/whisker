@@ -62,5 +62,34 @@ Delimiter swap tags can be standalone tags.
 ]
 '
 		},
+		TestCase{
+			name: 'Inverted Sections'
+			desc: 'Delimiters set outside inverted sections should persist.'
+			data: {
+				'section': DataModel(false)
+				'data':    'I got interpolated.'
+			}
+			template: '
+[
+{{-section}}
+	{{data}}
+	|data|
+{{/section}}
+{{= | | =}}
+|-section|
+	{{data}}
+	|data|
+|/section|
+]
+'
+			expected: '
+[
+	I got interpolated.
+	|data|
+	{{data}}
+	I got interpolated.
+]
+'
+		},
 	]
 }
