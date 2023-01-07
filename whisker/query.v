@@ -51,3 +51,26 @@ fn (mut stack DataStack) query(key string) !string {
 	}
 	return error('Could not find anything for "${key}".')
 }
+
+fn (mut stack DataStack) query_boolean_section(key string) !bool {
+	for index := stack.data.len - 1; index >= 0; index-- {
+		context := stack.data[index]
+		match context {
+			map[string]DataModel {
+				value := context[key] or { continue }
+				match value {
+					bool {
+						return value
+					}
+					else {
+						continue
+					}
+				}
+			}
+			else {
+				continue
+			}
+		}
+	}
+	return error('Could not find anything for "${key}".')
+}
