@@ -28,6 +28,8 @@ enum TokenType {
 	list_section
 	// Close section marks the end of a section
 	close_section
+	// Partials are plugged into the current template
+	partial
 }
 
 struct Token {
@@ -284,6 +286,12 @@ fn extract_tokens(input string) ![]Token {
 			`/` {
 				Token{
 					token_type: .close_section
+					content: tag_content[1..]
+				}
+			}
+			`>` {
+				Token{
+					token_type: .partial
 					content: tag_content[1..]
 				}
 			}

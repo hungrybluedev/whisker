@@ -6,15 +6,47 @@ import datatypes
 
 pub type DataModel = []DataModel | bool | map[string]DataModel | string
 
-pub type Partial = string
 pub struct WhiskerTemplate {
 	tokens []Token
 }
 
-pub fn new_template(input string, partials map[string]Partial) !WhiskerTemplate {
-	return WhiskerTemplate{
-		tokens: tokenize(input)!
+pub fn new_template(input string, partials map[string]string) !WhiskerTemplate {
+	mut tokenized_partials := map[string][]Token{}
+
+	for label, partial in partials {
+		tokenized_partials[label] = tokenize(partial)!
 	}
+
+	return WhiskerTemplate{
+		tokens: replace_partials(tokenize(input)!, tokenized_partials)!
+	}
+}
+
+fn replace_partials(original []Token, partials map[string][]Token) ![]Token {
+	mut partial_found := false
+	for token in original {
+		if token.token_type == .partial {
+			partial_found = true
+			break
+		}
+	}
+	if !partial_found {
+		return original
+	}
+	mut new_tokens := []Token{cap: original.len}
+	for token in original {
+		match token.token_type {
+			.partial {
+				new_tokens << partials[token.content] or {
+					return error('Could not find partial named: ${token.content}')
+				}
+			}
+			else {
+				new_tokens << token
+			}
+		}
+	}
+	return replace_partials(new_tokens, partials)
 }
 
 enum SectionType {
@@ -80,7 +112,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				switch := data_stack.query_boolean_section(token.content)!
 				if switch {
 					for template.tokens[index].token_type != .close_section
-					&& template.tokens[index].content != token.content {
+						&& template.tokens[index].content != token.content {
 						index++
 
 						if index >= template.tokens.len {
@@ -114,6 +146,9 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					return error('Expected to close ${last_section.name}, closed ${token.content} instead.')
 				}
 				index++
+			}
+			.partial {
+				return error('All partials should have been replaced at the beginning.')
 			}
 		}
 	}
