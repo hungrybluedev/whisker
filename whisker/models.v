@@ -6,22 +6,12 @@ import datatypes
 
 pub type DataModel = []DataModel | bool | map[string]DataModel | string
 
+pub type Partial = string
 pub struct WhiskerTemplate {
 	tokens []Token
 }
 
-pub fn new_template(input string) !WhiskerTemplate {
-	// input_lines := extract_lines(input)!
-	//
-	// input_lines.validate_line_lengths()!
-	// input_lines.validate_indentation()!
-	//
-	// mut tokenizer := Tokenizer{}
-	// tokenizer.tokenize(input_lines)!
-	//
-	// return WhiskerTemplate{
-	// 	tokens: tokenizer.tokens
-	// }
+pub fn new_template(input string, partials map[string]Partial) !WhiskerTemplate {
 	return WhiskerTemplate{
 		tokens: tokenize(input)!
 	}

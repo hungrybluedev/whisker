@@ -9,6 +9,7 @@ pub:
 	data     whisker.DataModel = whisker.DataModel(false)
 	template string
 	expected string
+	partials map[string]whisker.Partial
 }
 
 pub struct TestList {

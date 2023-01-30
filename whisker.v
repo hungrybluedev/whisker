@@ -1,20 +1,21 @@
 module main
 
-import spec
+// import spec
 import whisker
+import spec
 
 fn main() {
 	suites := [
 		spec.comment_tests,
-		// spec.delimiter_tests,
+		spec.delimiter_tests,
 	]
 	for suite in suites {
 		for test in suite.tests {
 			println(test.name)
-			template := whisker.new_template(test.template)!
+			template := whisker.new_template(test.template, test.partials)!
 			output := template.run(test.data)!
-			dump(output)
-			dump(test.expected)
+			// dump(output)
+			// dump(test.expected)
 			assert output.trim_space() == test.expected.trim_space(), 'Assertion failed for ${suite.name}: ${test.name}'
 		}
 	}
