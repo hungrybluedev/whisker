@@ -14,3 +14,6 @@ bin/
 .idea/
 .vscode/
 *.iml
+
+# Ignore personal notes and scratch files
+scratch
