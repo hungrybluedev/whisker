@@ -8,10 +8,11 @@ fn main() {
 	suites := [
 		spec.comment_tests,
 		spec.delimiter_tests,
+		spec.partial_test,
 	]
 	for suite in suites {
 		for test in suite.tests {
-			println(test.name)
+			println('${suite.name}: ${test.name}')
 			template := whisker.new_template(test.template, test.partials)!
 			output := template.run(test.data)!
 			// dump(output)
