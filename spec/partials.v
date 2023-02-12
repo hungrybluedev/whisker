@@ -29,5 +29,23 @@ Partials are external templates that can be plugged into the current template.
 			}
 			expected: '"*content*"'
 		},
+		TestCase{
+			name: 'Recursion'
+			desc: 'The greater-than operator should properly recurse.'
+			data: whisker.DataModel({
+				'content': 'X'
+				'nodes':   whisker.DataModel([
+					whisker.DataModel({
+						'content': whisker.DataModel('Y')
+						'nodes':   []whisker.DataModel{}
+					}),
+				])
+			})
+			template: '{{>node}}'
+			partials: {
+				'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>'
+			}
+			expected: 'X<Y<>>'
+		},
 	]
 }
