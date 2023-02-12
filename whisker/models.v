@@ -7,7 +7,9 @@ import datatypes
 pub type DataModel = []DataModel | bool | map[string]DataModel | string
 
 pub struct WhiskerTemplate {
-	tokens []Token
+pub:
+	tokens   []Token
+	partials map[string][]Token
 }
 
 pub fn new_template(input string, partials map[string]string) !WhiskerTemplate {
@@ -18,46 +20,14 @@ pub fn new_template(input string, partials map[string]string) !WhiskerTemplate {
 	}
 
 	return WhiskerTemplate{
-		tokens: replace_partials(tokenize(input)!, tokenized_partials)!
+		tokens: tokenize(input)!
+		partials: tokenized_partials
 	}
-}
-
-fn replace_partials(original []Token, partials map[string][]Token) ![]Token {
-	mut partial_found := false
-	for token in original {
-		if token.token_type == .partial {
-			partial_found = true
-			break
-		}
-	}
-	if !partial_found {
-		return original
-	}
-	mut new_tokens := []Token{cap: original.len}
-	for token in original {
-		match token.token_type {
-			.partial {
-				new_tokens << partials[token.content] or {
-					return error('Could not find partial named: ${token.content}')
-				}
-			}
-			else {
-				new_tokens << token
-			}
-		}
-	}
-	return replace_partials(new_tokens, partials)
-}
-
-enum SectionType {
-	boolean
-	list
-	map
 }
 
 struct Section {
-	name         string
-	section_type SectionType
+	name     string
+	contexts []DataModel
 }
 
 pub fn load_template(file string) !WhiskerTemplate {
@@ -65,93 +35,179 @@ pub fn load_template(file string) !WhiskerTemplate {
 }
 
 pub fn (template WhiskerTemplate) run(context DataModel) !string {
-	mut index := 0
-	mut output := strings.new_builder(256)
+	mut main_program := build_node_tree(template.tokens)!
+	mut partial_programs := map[string]Program{}
+
+	for partial, tokens in template.partials {
+		partial_programs[partial] = build_node_tree(tokens)!
+	}
 
 	mut data_stack := DataStack{}
 	data_stack.push(context)
 
+	mut output := strings.new_builder(256)
 	mut sections := datatypes.Stack[Section]{}
 
-	for index < template.tokens.len {
-		token := template.tokens[index]
-		match token.token_type {
+	mut current := main_program.head
+	for unsafe { current != nil } {
+		match current.token.token_type {
 			.normal {
-				output.write_string(token.content)
-				index++
+				output.write_string(current.token.content)
+				current = current.next
 			}
 			.comment {
 				// Skip
-				index++
+				current = current.next
 			}
 			.tag {
-				value := data_stack.query(token.content)!
+				value := data_stack.query(current.token.content)! as string
 				output.write_string(html.escape(value))
-				index++
+				current = current.next
 			}
 			.positive_section {
-				switch := data_stack.query_boolean_section(token.content)!
+				switch := data_stack.query(current.token.content)! as bool
 				if !switch {
-					for template.tokens[index].token_type != .close_section
-						&& template.tokens[index].content != token.content {
-						index++
-
-						if index >= template.tokens.len {
-							return error('Could not find section closing tag for ${token.content}')
-						}
-					}
+					current = current.jump
 				} else {
 					sections.push(Section{
-						name: token.content
-						section_type: .boolean
+						name: current.token.content
 					})
-					index++
+					current = current.next
 				}
 			}
 			.negative_section {
-				switch := data_stack.query_boolean_section(token.content)!
+				switch := data_stack.query(current.token.content)! as bool
 				if switch {
-					for template.tokens[index].token_type != .close_section
-						&& template.tokens[index].content != token.content {
-						index++
-
-						if index >= template.tokens.len {
-							return error('Could not find section closing tag for ${token.content}')
-						}
-					}
+					current = current.jump
 				} else {
 					sections.push(Section{
-						name: token.content
-						section_type: .boolean
+						name: current.token.content
 					})
-					index++
+					current = current.next
 				}
 			}
 			.map_section {
-				index++
-
 				// TODO
+				current = current.next
 			}
 			.list_section {
-				index++
-
 				// TODO
+				current = current.next
 			}
 			.close_section {
 				if sections.is_empty() {
 					return error('Found a stray closing tag.')
 				}
 				last_section := sections.pop()!
-				if last_section.name != token.content {
-					return error('Expected to close ${last_section.name}, closed ${token.content} instead.')
+				if last_section.name != current.token.content {
+					return error('Expected to close ${last_section.name}, closed ${current.token.content} instead.')
 				}
-				index++
+				current = current.next
 			}
-			.partial {
-				return error('All partials should have been replaced at the beginning.')
+			.partial_section {
+				name := current.token.content
+				if name !in partial_programs {
+					return error('No partial found named "${name}"')
+				}
+				next := current.next
+
+				mut replacement := partial_programs[name]
+				replacement.tail.next = next
+
+				current = replacement.head
 			}
 		}
 	}
 
 	return output.str()
+
+	// mut index := 0
+	// mut output := strings.new_builder(256)
+	//
+	// mut data_stack := DataStack{}
+	// data_stack.push(context)
+	//
+	// mut sections := datatypes.Stack[Section]{}
+	//
+	// for index < template.tokens.len {
+	// 	token := template.tokens[index]
+	// 	match token.token_type {
+	// 		.normal {
+	// 			output.write_string(token.content)
+	// 			index++
+	// 		}
+	// 		.comment {
+	// 			// Skip
+	// 			index++
+	// 		}
+	// 		.tag {
+	// 			value := data_stack.query(token.content)!
+	// 			output.write_string(html.escape(value))
+	// 			index++
+	// 		}
+	// 		.positive_section {
+	// 			switch := data_stack.query_boolean_section(token.content)!
+	// 			if !switch {
+	// 				for template.tokens[index].token_type != .close_section
+	// 					&& template.tokens[index].content != token.content {
+	// 					index++
+	//
+	// 					if index >= template.tokens.len {
+	// 						return error('Could not find section closing tag for ${token.content}')
+	// 					}
+	// 				}
+	// 			} else {
+	// 				sections.push(Section{
+	// 					name: token.content
+	// 					section_type: .boolean
+	// 				})
+	// 				index++
+	// 			}
+	// 		}
+	// 		.negative_section {
+	// 			switch := data_stack.query_boolean_section(token.content)!
+	// 			if switch {
+	// 				for template.tokens[index].token_type != .close_section
+	// 					&& template.tokens[index].content != token.content {
+	// 					index++
+	//
+	// 					if index >= template.tokens.len {
+	// 						return error('Could not find section closing tag for ${token.content}')
+	// 					}
+	// 				}
+	// 			} else {
+	// 				sections.push(Section{
+	// 					name: token.content
+	// 					section_type: .boolean
+	// 				})
+	// 				index++
+	// 			}
+	// 		}
+	// 		.map_section {
+	// 			index++
+	//
+	// 			// TODO
+	// 		}
+	// 		.list_section {
+	// 			index++
+	//
+	// 			// TODO
+	// 		}
+	// 		.close_section {
+	// 			if sections.is_empty() {
+	// 				return error('Found a stray closing tag.')
+	// 			}
+	// 			last_section := sections.pop()!
+	// 			if last_section.name != token.content {
+	// 				return error('Expected to close ${last_section.name}, closed ${token.content} instead.')
+	// 			}
+	// 			index++
+	// 		}
+	// 		.partial_section {
+	// 			return error('All partials should have been replaced at the beginning.')
+	// 		}
+	// 	}
+	// }
+	//
+	// return output.str()
 }
