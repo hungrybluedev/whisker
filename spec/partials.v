@@ -33,7 +33,7 @@ Partials are external templates that can be plugged into the current template.
 			name: 'Recursion'
 			desc: 'The greater-than operator should properly recurse.'
 			data: whisker.DataModel({
-				'content': 'X'
+				'content': whisker.DataModel('X')
 				'nodes':   whisker.DataModel([
 					whisker.DataModel({
 						'content': whisker.DataModel('Y')
