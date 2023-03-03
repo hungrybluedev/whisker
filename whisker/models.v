@@ -105,7 +105,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				current = current.next
 			}
 			.partial_section {
-				name := current.token.content
+				name := current.token.content.trim_space()
 				if name !in partial_programs {
 					return error('No partial found named "${name}"')
 				}

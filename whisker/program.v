@@ -4,6 +4,9 @@ module whisker
 struct Node {
 	token Token
 mut:
+	// For retaining indentation context
+	new_indent string
+	// For traversal
 	next &Node = unsafe { nil }
 	jump &Node = unsafe { nil }
 }
@@ -16,9 +19,9 @@ pub fn (node Node) str() string {
 
 [heap]
 struct Program {
-	len  int
-	head &Node = unsafe { nil }
+	len int
 mut:
+	head &Node = unsafe { nil }
 	tail &Node = unsafe { nil }
 }
 
