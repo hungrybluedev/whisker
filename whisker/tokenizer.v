@@ -30,6 +30,11 @@ enum TokenType {
 	close_section
 	// Partials are plugged into the current template
 	partial_section
+	// INTERNAL Program Execution Tokens
+	// Expanded map sections are associated with only one key from a map
+	expanded_map_section
+	// Expanded list sections are associated with only one index of a list
+	expanded_list_section
 }
 
 struct Token {

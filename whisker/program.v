@@ -4,8 +4,6 @@ module whisker
 struct Node {
 	token Token
 mut:
-	// For retaining indentation context
-	new_indent string
 	// For traversal
 	next &Node = unsafe { nil }
 	jump &Node = unsafe { nil }

@@ -86,12 +86,42 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					current = current.next
 				}
 			}
+			.expanded_map_section {
+				// TODO:
+				current = current.next
+			}
+			.expanded_list_section {
+				// TODO:
+				current = current.next
+			}
 			.map_section {
-				// TODO
+				// Iterate over all map keys and replace with expanded map sections
+				// work_map := data_stack.query(current.token.content)! as map[string]DataModel
+				//
+				// // Skip over if there's nothing to do
+				// if work_map.len == 0 {
+				// 	current = current.jump
+				// 	continue
+				// }
+				//
+				// // Make a copy of the map section
+				//
+				// mut insertion_point := current.jump
+				//
+				// for key, data in work_map {
+				// 	insertion_point.next = Node{
+				// 		token: Token{
+				// 			content: '${current.token.content}.${key}'
+				// 			token_type: .expanded_map_section
+				// 		}
+				// 		next: current.next
+				// 	}
+				// }
 				current = current.next
 			}
 			.list_section {
 				// TODO
+				// Iterate over all list keys and replace with expanded map sections
 				current = current.next
 			}
 			.close_section {

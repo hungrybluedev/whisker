@@ -16,7 +16,9 @@ fn main() {
 			template := whisker.new_template(test.template, test.partials)!
 			output := template.run(test.data)!
 			// dump(output)
+			// dump(output.bytes())
 			// dump(test.expected)
+			// dump(test.expected.bytes())
 			assert output.trim_space() == test.expected.trim_space(), 'Assertion failed for ${suite.name}: ${test.name}'
 		}
 	}

@@ -77,7 +77,15 @@ Partials are external templates that can be plugged into the current template.
 				'partial': '>'
 			}
 		},
-		// I don't like supporting significant whitespace.
+		TestCase{
+			name: 'Standalone Without Previous Line'
+			desc: 'Standalone tags should not require a newline to precede them.'
+			template: '  {{>partial}}\n>'
+			expected: '  >\n>>'
+			partials: {
+				'partial': '>\n>'
+			}
+		},
 		TestCase{
 			name: 'Standalone Without Newline'
 			desc: 'Standalone tags should not require a newline to follow them.'
@@ -85,6 +93,27 @@ Partials are external templates that can be plugged into the current template.
 			expected: '>\n>\n>'
 			partials: {
 				'partial': '>\n>'
+			}
+		},
+		TestCase{
+			name: 'Indentation Not Preserved'
+			desc: 'Partials are not indented. Use an external formatter after template'
+			data: whisker.DataModel({
+				'content': whisker.DataModel('cc')
+			})
+			template: 'aa
+	{{>partial}}
+aa'
+			expected: 'aa
+bb
+bb cc
+bb
+aa'
+			partials: {
+				'partial': 'bb
+bb {{content}}
+bb
+'
 			}
 		},
 		TestCase{
