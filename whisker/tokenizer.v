@@ -253,9 +253,9 @@ fn extract_tokens(input string) ![]Token {
 		// We've got the closing tag
 		index += end_delim.len
 		tag_content := buffer.str().trim_space()
-		if tag_content.len < 2 {
-			return error('Invalid tag content: "${tag_content}"')
-		}
+		// if tag_content.len < 1 {
+		// 	return error('Invalid tag content: "${tag_content}"')
+		// }
 
 		tokens << match tag_content[0] {
 			`!` {

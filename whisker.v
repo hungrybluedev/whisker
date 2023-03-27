@@ -9,6 +9,7 @@ fn main() {
 		spec.comment_tests,
 		spec.delimiter_tests,
 		spec.partial_test,
+		spec.section_test,
 	]
 	for suite in suites {
 		for test in suite.tests {

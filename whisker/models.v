@@ -13,6 +13,10 @@ pub:
 }
 
 pub fn new_template(input string, partials map[string]string) !WhiskerTemplate {
+	if input.len == 0 {
+		return WhiskerTemplate{}
+	}
+
 	mut tokenized_partials := map[string][]Token{}
 
 	for label, partial in partials {
@@ -36,6 +40,11 @@ pub fn load_template(file string) !WhiskerTemplate {
 
 pub fn (template WhiskerTemplate) run(context DataModel) !string {
 	mut main_program := build_node_tree(template.tokens)!
+
+	if unsafe { main_program.head == nil } {
+		return ''
+	}
+
 	mut partial_programs := map[string]Program{}
 
 	for partial, tokens in template.partials {
@@ -72,6 +81,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					sections.push(Section{
 						name: current.token.content
 					})
+					data_stack.push(true)
 					current = current.next
 				}
 			}
@@ -83,6 +93,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					sections.push(Section{
 						name: current.token.content
 					})
+					data_stack.push(false)
 					current = current.next
 				}
 			}
@@ -95,7 +106,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				current = current.next
 			}
 			.map_section {
-				// Iterate over all map keys and replace with expanded map sections
+				// // Iterate over all map keys and replace with expanded map sections
 				// work_map := data_stack.query(current.token.content)! as map[string]DataModel
 				//
 				// // Skip over if there's nothing to do
@@ -104,19 +115,50 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				// 	continue
 				// }
 				//
-				// // Make a copy of the map section
+				// mut post_generation_node := current
 				//
-				// mut insertion_point := current.jump
+				// for key in work_map.keys() {
+				// 	// Make a copy of the map section
 				//
-				// for key, data in work_map {
-				// 	insertion_point.next = Node{
+				// 	mut insertion_point := Node{
+				// 		...current.next
+				// 	}
+				//
+				// 	mut replacement := &Node{
 				// 		token: Token{
 				// 			content: '${current.token.content}.${key}'
 				// 			token_type: .expanded_map_section
 				// 		}
-				// 		next: current.next
 				// 	}
+				//
+				// 	mut map_element_node := insertion_point
+				// 	mut replacement_node := replacement
+				//
+				// 	replacement.next = Node{
+				// 		...map_element_node
+				// 	}
+				// 	dump(replacement)
+				//
+				// 	for map_element_node != current.jump {
+				// 		replacement = replacement.next
+				//
+				// 		replacement.next = Node{
+				// 			...map_element_node.next
+				// 		}
+				// 		dump(replacement)
+				//
+				// 		map_element_node = current.next
+				// 	}
+				//
 				// }
+				//
+				// current = current.next
+
+				work_map := data_stack.query(current.token.content)! as map[string]DataModel
+				data_stack.push(work_map)
+				sections.push(Section{
+					name: current.token.content
+				})
 				current = current.next
 			}
 			.list_section {

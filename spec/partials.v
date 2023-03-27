@@ -1,6 +1,6 @@
 module spec
 
-import whisker
+import whisker { DataModel }
 
 pub const partial_test = TestList{
 	name: 'Partials'
@@ -21,7 +21,7 @@ Partials are external templates that can be plugged into the current template.
 			name: 'Context'
 			desc: 'The greater-than operator should operate within the current context.'
 			data: {
-				'text': whisker.DataModel('content')
+				'text': DataModel('content')
 			}
 			template: '"{{>partial}}"'
 			partials: {
@@ -59,8 +59,8 @@ Partials are external templates that can be plugged into the current template.
 		TestCase{
 			name: 'Inline Indentation'
 			desc: 'Whitespace should be left untouched.'
-			data: whisker.DataModel({
-				'data': whisker.DataModel('|')
+			data: DataModel({
+				'data': DataModel('|')
 			})
 			partials: {
 				'partial': '>\n>'
@@ -98,8 +98,8 @@ Partials are external templates that can be plugged into the current template.
 		TestCase{
 			name: 'Indentation Not Preserved'
 			desc: 'Partials are not indented. Use an external formatter after template'
-			data: whisker.DataModel({
-				'content': whisker.DataModel('cc')
+			data: DataModel({
+				'content': DataModel('cc')
 			})
 			template: 'aa
 	{{>partial}}

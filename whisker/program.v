@@ -25,7 +25,7 @@ mut:
 
 pub fn build_node_tree(fragment []Token) !Program {
 	if fragment.len == 0 {
-		return error('Cannot build a program from an empty fragment.')
+		return Program{}
 	}
 	mut head := &Node{
 		token: fragment.first()
