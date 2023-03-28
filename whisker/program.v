@@ -60,9 +60,26 @@ fn add_jumps(head &Node) ! {
 				// Found the beginning of a skippable section
 				// We save the name of the section and look for the closing section
 				name := current.token.content
-				mut section := current
-				for unsafe { section != nil } && !(section.token.token_type == .close_section
-					&& section.token.content == name) {
+
+				mut depth := 0
+
+				mut section := current.next
+				for unsafe { section != nil } && !(depth == 0
+					&& section.token.token_type == .close_section && section.token.content == name) {
+					// Check for nested sections
+					if section.token.content == name {
+						match section.token.token_type {
+							// Found a duplicate nested section, keep track
+							current.token.token_type {
+								depth++
+							}
+							// Found a closer for the nested section, leave it alone.
+							.close_section {
+								depth--
+							}
+							else {}
+						}
+					}
 					section = section.next
 				}
 

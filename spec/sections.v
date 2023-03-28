@@ -202,5 +202,23 @@ pub const section_test = TestList{
 			template: '"{{*list}}{{item}}{{/list}}"'
 			expected: '"123"'
 		},
+		TestCase{
+			name: 'Empty List 2'
+			desc: 'Empty list should be skipped over.'
+			data: DataModel({
+				'list': DataModel([]DataModel{})
+			})
+			template: '"{{*list}}Yay lists!{{/list}}"'
+			expected: '""'
+		},
+		TestCase{
+			name: 'Nested (Positive Boolean)'
+			desc: 'Nested positive boolean sections should have their contents rendered.'
+			data: DataModel({
+				'bool': DataModel(true)
+			})
+			template: '| A {{+bool}}B {{+bool}}C{{/bool}} D{{/bool}} E |'
+			expected: '| A B C D E |'
+		},
 	]
 }
