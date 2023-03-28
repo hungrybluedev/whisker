@@ -54,16 +54,16 @@ pub const section_test = TestList{
 				})
 			})
 			template: "{{#person}}
-My name is {{name}}.
-I am {{age}} years old.
-{{+indian}}I'm from India{{/indian}}
-{{/person}}
-"
+		My name is {{name}}.
+		I am {{age}} years old.
+		{{+indian}}I'm from India{{/indian}}
+		{{/person}}
+		"
 			expected: "
-My name is Subhomoy.
-I am 24 years old.
-I'm from India
-"
+		My name is Subhomoy.
+		I am 24 years old.
+		I'm from India
+		"
 		},
 		TestCase{
 			name: 'Context'
@@ -121,39 +121,86 @@ I'm from India
 				}
 			})
 			template: '
-{{#a}}
-{{one}}
-{{#b}}
-{{one}}{{two}}{{one}}
-{{#c}}
-{{one}}{{two}}{{three}}{{two}}{{one}}
-{{#d}}
-{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}
-{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}
-{{one}}{{two}}{{three}}{{four}}{{five}}6{{five}}{{four}}{{three}}{{two}}{{one}}
-{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}
-{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}
-{{/d}}
-{{one}}{{two}}{{three}}{{two}}{{one}}
-{{/c}}
-{{one}}{{two}}{{one}}
-{{/b}}
-{{one}}
-{{/a}}
-'
+		{{#a}}
+		{{one}}
+		{{#b}}
+		{{one}}{{two}}{{one}}
+		{{#c}}
+		{{one}}{{two}}{{three}}{{two}}{{one}}
+		{{#d}}
+		{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}
+		{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}
+		{{one}}{{two}}{{three}}{{four}}{{five}}6{{five}}{{four}}{{three}}{{two}}{{one}}
+		{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}
+		{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}
+		{{/d}}
+		{{one}}{{two}}{{three}}{{two}}{{one}}
+		{{/c}}
+		{{one}}{{two}}{{one}}
+		{{/b}}
+		{{one}}
+		{{/a}}
+		'
 			expected: '
-1
-121
-12321
-1234321
-123454321
-12345654321
-123454321
-1234321
-12321
-121
-1
-'
+		1
+		121
+		12321
+		1234321
+		123454321
+		12345654321
+		123454321
+		1234321
+		12321
+		121
+		1
+		'
+		},
+		TestCase{
+			name: 'Doubled'
+			desc: 'Multiple sections per template should be permitted.'
+			data: DataModel({
+				'bool': DataModel(true)
+				'two':  DataModel('second')
+			})
+			template: '
+		{{+bool}}
+		* first
+		{{/bool}}
+		* {{two}}
+		{{+bool}}
+		* third
+		{{/bool}}
+		'
+			expected: '
+		* first
+		* second
+		* third
+		'
+		},
+		TestCase{
+			name: 'Empty List'
+			desc: 'Empty list should be skipped over.'
+			data: DataModel({
+				'sample': DataModel('vibe')
+				'empty':  []DataModel{}
+			})
+			template: '{{sample}}{{*empty}}{{sample}}{{/empty}}'
+			expected: 'vibe'
+		},
+		TestCase{
+			name: 'List'
+			desc: 'Lists should be iterated; list items should visit the context stack.'
+			data: DataModel({
+				'list': DataModel([DataModel({
+					'item': DataModel('1')
+				}), {
+					'item': DataModel('2')
+				}, {
+					'item': DataModel('3')
+				}])
+			})
+			template: '"{{*list}}{{item}}{{/list}}"'
+			expected: '"123"'
 		},
 	]
 }

@@ -13,13 +13,13 @@ fn (mut stack DataStack) push(context DataModel) {
 	stack.data << context
 }
 
-// fn (mut stack DataStack) pop() !DataModel {
-// 	return if stack.data.len > 0 { stack.data.pop() } else { error('Empty stack') }
-// }
+fn (mut stack DataStack) pop() !DataModel {
+	return if stack.data.len > 0 { stack.data.pop() } else { error('Empty stack') }
+}
 
-// fn (mut stack DataStack) peep() !DataStack {
-// 	return if stack.data.len > 0 { stack.data.last() } else { error('Empty stack') }
-// }
+fn (mut stack DataStack) peep() !DataModel {
+	return if stack.data.len > 0 { stack.data.last() } else { error('Empty stack') }
+}
 
 fn (mut stack DataStack) list_query(key string) ![]DataModel {
 	return error('Not implemented yet.')
@@ -52,10 +52,7 @@ fn (mut stack DataStack) query(key string) !DataModel {
 
 	// We need to return the atomic value of the section
 	if key == '.' {
-		if stack.data.len == 0 {
-			return error('Nothing on the context stack to retrieve from.')
-		}
-		top := stack.data.last()
+		top := stack.peep()!
 		return match top {
 			bool {
 				top.str()

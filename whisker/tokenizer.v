@@ -30,9 +30,7 @@ enum TokenType {
 	close_section
 	// Partials are plugged into the current template
 	partial_section
-	// INTERNAL Program Execution Tokens
-	// Expanded map sections are associated with only one key from a map
-	expanded_map_section
+	// INTERNAL Program Execution Token
 	// Expanded list sections are associated with only one index of a list
 	expanded_list_section
 }
@@ -282,7 +280,7 @@ fn extract_tokens(input string) ![]Token {
 					content: tag_content[1..]
 				}
 			}
-			`$` {
+			`*` {
 				Token{
 					token_type: .list_section
 					content: tag_content[1..]

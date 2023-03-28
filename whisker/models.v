@@ -69,12 +69,20 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				current = current.next
 			}
 			.tag {
-				value := data_stack.query(current.token.content)! as string
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is string {
+					return error('Expected a string for "${current.token.content}')
+				}
+				value := query_value as string
 				output.write_string(html.escape(value))
 				current = current.next
 			}
 			.positive_section {
-				switch := data_stack.query(current.token.content)! as bool
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is bool {
+					return error('Expected a bool for "${current.token.content}')
+				}
+				switch := query_value as bool
 				if !switch {
 					current = current.jump
 				} else {
@@ -86,7 +94,11 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				}
 			}
 			.negative_section {
-				switch := data_stack.query(current.token.content)! as bool
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is bool {
+					return error('Expected a bool for "${current.token.content}')
+				}
+				switch := query_value as bool
 				if switch {
 					current = current.jump
 				} else {
@@ -97,64 +109,37 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					current = current.next
 				}
 			}
-			.expanded_map_section {
-				// TODO:
-				current = current.next
-			}
 			.expanded_list_section {
-				// TODO:
+				sections.push(Section{
+					name: current.token.content
+				})
+				parts := current.token.content.split('#')
+				if parts.len != 2 {
+					return error('Invalid expanded section name: ${current.token.content}')
+				}
+
+				list_name := parts[0]
+				list_index := parts[1].int()
+
+				query_value := data_stack.query(list_name)!
+				if query_value !is []DataModel {
+					return error('Expected a list for "${list_name}"')
+				}
+				work_list := query_value as []DataModel
+
+				if list_index < 0 || list_index >= work_list.len {
+					return error('Invalid list index ${list_index} for "${list_name}"')
+				}
+
+				data_stack.push(work_list[list_index])
 				current = current.next
 			}
 			.map_section {
-				// // Iterate over all map keys and replace with expanded map sections
-				// work_map := data_stack.query(current.token.content)! as map[string]DataModel
-				//
-				// // Skip over if there's nothing to do
-				// if work_map.len == 0 {
-				// 	current = current.jump
-				// 	continue
-				// }
-				//
-				// mut post_generation_node := current
-				//
-				// for key in work_map.keys() {
-				// 	// Make a copy of the map section
-				//
-				// 	mut insertion_point := Node{
-				// 		...current.next
-				// 	}
-				//
-				// 	mut replacement := &Node{
-				// 		token: Token{
-				// 			content: '${current.token.content}.${key}'
-				// 			token_type: .expanded_map_section
-				// 		}
-				// 	}
-				//
-				// 	mut map_element_node := insertion_point
-				// 	mut replacement_node := replacement
-				//
-				// 	replacement.next = Node{
-				// 		...map_element_node
-				// 	}
-				// 	dump(replacement)
-				//
-				// 	for map_element_node != current.jump {
-				// 		replacement = replacement.next
-				//
-				// 		replacement.next = Node{
-				// 			...map_element_node.next
-				// 		}
-				// 		dump(replacement)
-				//
-				// 		map_element_node = current.next
-				// 	}
-				//
-				// }
-				//
-				// current = current.next
-
-				work_map := data_stack.query(current.token.content)! as map[string]DataModel
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is map[string]DataModel {
+					return error('Expected a map for "${current.token.content}"')
+				}
+				work_map := query_value as map[string]DataModel
 				data_stack.push(work_map)
 				sections.push(Section{
 					name: current.token.content
@@ -162,8 +147,73 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				current = current.next
 			}
 			.list_section {
-				// TODO
 				// Iterate over all list keys and replace with expanded map sections
+
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is []DataModel {
+					return error('Expected a list for "${current.token.content}"')
+				}
+				work_list := query_value as []DataModel
+
+				if work_list.len == 0 {
+					// Nothing to do, skip over
+					current = current.jump
+					continue
+				}
+
+				// Copy over the inner contents of the list
+				mut inner_nodes := []&Node{}
+
+				for n := current.next; n != current.jump; n = n.next {
+					inner_nodes << n
+				}
+				// Last one is the list close section
+				original_list_closer := inner_nodes.pop()
+
+				// If the inner content of the list section is empty, we skip
+				if inner_nodes.len == 0 {
+					// Nothing to do, skip over
+					current = current.jump
+					continue
+				}
+
+				sections.push(Section{
+					name: current.token.content
+				})
+
+				// Now we copy the inner-nodes and modify the program
+				mut join_point := current
+				for index, _ in work_list {
+					// New context for expanded list
+					section_name := '${current.token.content}#${index}'
+					mut list_opener := &Node{
+						token: Token{
+							content: section_name
+							token_type: .expanded_list_section
+						}
+					}
+					mut list_closer := &Node{
+						token: Token{
+							content: section_name
+							token_type: .close_section
+						}
+						jump: list_opener
+					}
+					join_point.next = list_opener
+					join_point = list_opener
+					for node in inner_nodes {
+						copy := &Node{
+							...node
+						}
+						join_point.next = copy
+						join_point = copy
+					}
+					join_point.next = list_closer
+					join_point = list_closer
+				}
+
+				join_point.next = original_list_closer
+
 				current = current.next
 			}
 			.close_section {
@@ -173,6 +223,11 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				last_section := sections.pop()!
 				if last_section.name != current.token.content {
 					return error('Expected to close ${last_section.name}, closed ${current.token.content} instead.')
+				}
+				original_section := current.jump
+				if original_section.token.token_type in [.expanded_list_section, .negative_section,
+					.positive_section, .map_section] {
+					data_stack.pop()!
 				}
 				current = current.next
 			}
@@ -192,94 +247,4 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 	}
 
 	return output.str()
-
-	// mut index := 0
-	// mut output := strings.new_builder(256)
-	//
-	// mut data_stack := DataStack{}
-	// data_stack.push(context)
-	//
-	// mut sections := datatypes.Stack[Section]{}
-	//
-	// for index < template.tokens.len {
-	// 	token := template.tokens[index]
-	// 	match token.token_type {
-	// 		.normal {
-	// 			output.write_string(token.content)
-	// 			index++
-	// 		}
-	// 		.comment {
-	// 			// Skip
-	// 			index++
-	// 		}
-	// 		.tag {
-	// 			value := data_stack.query(token.content)!
-	// 			output.write_string(html.escape(value))
-	// 			index++
-	// 		}
-	// 		.positive_section {
-	// 			switch := data_stack.query_boolean_section(token.content)!
-	// 			if !switch {
-	// 				for template.tokens[index].token_type != .close_section
-	// 					&& template.tokens[index].content != token.content {
-	// 					index++
-	//
-	// 					if index >= template.tokens.len {
-	// 						return error('Could not find section closing tag for ${token.content}')
-	// 					}
-	// 				}
-	// 			} else {
-	// 				sections.push(Section{
-	// 					name: token.content
-	// 					section_type: .boolean
-	// 				})
-	// 				index++
-	// 			}
-	// 		}
-	// 		.negative_section {
-	// 			switch := data_stack.query_boolean_section(token.content)!
-	// 			if switch {
-	// 				for template.tokens[index].token_type != .close_section
-	// 					&& template.tokens[index].content != token.content {
-	// 					index++
-	//
-	// 					if index >= template.tokens.len {
-	// 						return error('Could not find section closing tag for ${token.content}')
-	// 					}
-	// 				}
-	// 			} else {
-	// 				sections.push(Section{
-	// 					name: token.content
-	// 					section_type: .boolean
-	// 				})
-	// 				index++
-	// 			}
-	// 		}
-	// 		.map_section {
-	// 			index++
-	//
-	// 			// TODO
-	// 		}
-	// 		.list_section {
-	// 			index++
-	//
-	// 			// TODO
-	// 		}
-	// 		.close_section {
-	// 			if sections.is_empty() {
-	// 				return error('Found a stray closing tag.')
-	// 			}
-	// 			last_section := sections.pop()!
-	// 			if last_section.name != token.content {
-	// 				return error('Expected to close ${last_section.name}, closed ${token.content} instead.')
-	// 			}
-	// 			index++
-	// 		}
-	// 		.partial_section {
-	// 			return error('All partials should have been replaced at the beginning.')
-	// 		}
-	// 	}
-	// }
-	//
-	// return output.str()
 }
