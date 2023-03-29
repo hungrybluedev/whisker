@@ -10,6 +10,7 @@ fn main() {
 		spec.delimiter_tests,
 		spec.partial_test,
 		spec.section_test,
+		spec.inverted_test,
 	]
 	for suite in suites {
 		for test in suite.tests {
