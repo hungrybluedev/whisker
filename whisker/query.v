@@ -5,10 +5,6 @@ mut:
 	data []DataModel
 }
 
-// fn (stack DataStack) is_empty() bool {
-// 	return stack.data.len == 0
-// }
-
 fn (mut stack DataStack) push(context DataModel) {
 	stack.data << context
 }
@@ -19,14 +15,6 @@ fn (mut stack DataStack) pop() !DataModel {
 
 fn (mut stack DataStack) peep() !DataModel {
 	return if stack.data.len > 0 { stack.data.last() } else { error('Empty stack') }
-}
-
-fn (mut stack DataStack) list_query(key string) ![]DataModel {
-	return error('Not implemented yet.')
-}
-
-fn (mut stack DataStack) map_query(key string) !map[string]DataModel {
-	return error('Not implemented yet.')
 }
 
 fn (mut stack DataStack) simple_query(key string) !DataModel {
@@ -54,11 +42,17 @@ fn (mut stack DataStack) query(key string) !DataModel {
 	if key == '.' {
 		top := stack.peep()!
 		return match top {
+			string {
+				top
+			}
 			bool {
 				top.str()
 			}
+			[]DataModel {
+				top.clone()
+			}
 			else {
-				return error('Cannot retrieve value of non-boolean key.')
+				return error('Cannot retrieve value of non-supported key.')
 			}
 		}
 	}

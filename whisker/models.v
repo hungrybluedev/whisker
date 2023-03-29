@@ -6,6 +6,23 @@ import datatypes
 
 pub type DataModel = []DataModel | bool | map[string]DataModel | string
 
+pub fn (data DataModel) clone() DataModel {
+	return match data {
+		bool {
+			data
+		}
+		string {
+			data
+		}
+		[]DataModel {
+			data.clone()
+		}
+		map[string]DataModel {
+			data.clone()
+		}
+	}
+}
+
 pub struct WhiskerTemplate {
 pub:
 	tokens   []Token
@@ -131,7 +148,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					return error('Invalid list index ${list_index} for "${list_name}"')
 				}
 
-				data_stack.push(work_list[list_index])
+				data_stack.push(work_list[list_index].clone())
 				current = current.next
 			}
 			.map_section {
@@ -154,7 +171,6 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 					return error('Expected a list for "${current.token.content}"')
 				}
 				work_list := query_value as []DataModel
-
 				if work_list.len == 0 {
 					// Nothing to do, skip over
 					current = current.jump
@@ -163,9 +179,10 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 
 				// Copy over the inner contents of the list
 				mut inner_nodes := []&Node{}
-
-				for n := current.next; n != current.jump; n = n.next {
-					inner_nodes << n
+				for n := current.next; unsafe { n != nil } && n != current.jump; n = n.next {
+					inner_nodes << &Node{
+						...n
+					}
 				}
 				// Last one is the list close section
 				original_list_closer := inner_nodes.pop()

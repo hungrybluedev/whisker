@@ -265,37 +265,37 @@ fn extract_tokens(input string) ![]Token {
 			`+` {
 				Token{
 					token_type: .positive_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			`-` {
 				Token{
 					token_type: .negative_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			`#` {
 				Token{
 					token_type: .map_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			`*` {
 				Token{
 					token_type: .list_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			`/` {
 				Token{
 					token_type: .close_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			`>` {
 				Token{
 					token_type: .partial_section
-					content: tag_content[1..]
+					content: tag_content[1..].trim_space()
 				}
 			}
 			else {

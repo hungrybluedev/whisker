@@ -212,13 +212,153 @@ pub const section_test = TestList{
 			expected: '""'
 		},
 		TestCase{
-			name: 'Nested (Positive Boolean)'
-			desc: 'Nested positive boolean sections should have their contents rendered.'
+			name: 'Nested (True Boolean)'
+			desc: 'Nested true boolean sections should have their contents rendered.'
 			data: DataModel({
 				'bool': DataModel(true)
 			})
 			template: '| A {{+bool}}B {{+bool}}C{{/bool}} D{{/bool}} E |'
 			expected: '| A B C D E |'
+		},
+		TestCase{
+			name: 'Nested (False Boolean)'
+			desc: 'Nested false boolean sections should be omitted.'
+			data: DataModel({
+				'bool': DataModel(false)
+			})
+			template: '| A {{+bool}}B {{+bool}}C{{/bool}} D{{/bool}} E |'
+			expected: '| A  E |'
+		},
+		TestCase{
+			name: 'Implicit Iterator - String'
+			desc: 'Implicit iterators should directly interpolate strings.'
+			data: DataModel({
+				'list': DataModel([DataModel('a'), 'b', 'c', 'd', 'e'])
+			})
+			template: '"{{*list}}({{.}}){{/list}}"'
+			expected: '"(a)(b)(c)(d)(e)"'
+		},
+		TestCase{
+			name: 'Implicit Iterator - Boolean'
+			desc: 'Implicit iterators should directly interpolate booleans.'
+			data: DataModel({
+				'list': DataModel([DataModel(true), false, true, true, false])
+			})
+			template: '"{{*list}}({{.}}){{/list}}"'
+			expected: '"(true)(false)(true)(true)(false)"'
+		},
+		// TODO: Fix this nested iteration case
+		// TestCase{
+		// 	name: 'Implicit Iterator - Array'
+		// 	desc: 'Implicit iterators should allow iterating over nested arrays.'
+		// 	data: DataModel({
+		// 		'list': DataModel([DataModel([DataModel('1'), '2', '3']),
+		// 			DataModel([DataModel('a'), 'b', 'c'])])
+		// 	})
+		// 	template: '"{{*list}}({{*.}}{{.}}{{/.}}){{/list}}"'
+		// 	expected: '"(123)(abc)"'
+		// },
+		TestCase{
+			name: 'Dotted Names'
+			desc: 'Dotted Names should be valid for boolean section tags'
+			data: DataModel({
+				'a': DataModel({
+					'b': DataModel({
+						'c': DataModel(true)
+						'd': DataModel(false)
+					})
+				})
+			})
+			template: '"{{+a.b.c}}A{{/a.b.c}}{{-a.b.d}}B{{/a.b.d}}"'
+			expected: '"AB"'
+		},
+		TestCase{
+			name: 'Surrounding Whitespace'
+			desc: 'Sections should not alter surrounding whitespace.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: ' | {{+boolean}} {{! Important Whitespace }}\n {{/boolean}} | \n'
+			expected: ' |  \n  | \n'
+		},
+		TestCase{
+			name: 'Indented Inline Sections'
+			desc: 'Single-line sections should not alter surrounding whitespace.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: ' {{+boolean}}YES{{/boolean}}\n {{+boolean}}GOOD{{/boolean}}\n'
+			expected: ' YES\n GOOD\n'
+		},
+		TestCase{
+			name: 'Standalone Lines'
+			desc: 'Standalone lines should be removed from the template.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '|
+		| This Is
+		{{+boolean}}
+		|
+		{{/boolean}}
+		| A Line'
+			expected: '|
+		| This Is
+		|
+		| A Line'
+		},
+		TestCase{
+			name: 'Indented Standalone Lines'
+			desc: 'Indented standalone lines should be removed from the template.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '
+		| This Is
+			{{+boolean}}
+		|
+			{{/boolean}}
+		| A Line'
+			expected: '
+		| This Is
+		|
+		| A Line'
+		},
+		TestCase{
+			name: 'Standalone Line Endings'
+			desc: '"\r\n" should be considered a newline for standalone tags.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '|\r\n{{+boolean}}\r\n{{/boolean}}\r\n|'
+			expected: '|\r\n|'
+		},
+		TestCase{
+			name: 'Standalone Without Previous Line'
+			desc: 'Standalone tags should not require a newline to precede them.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '  {{+boolean}}\n#{{/boolean}}\n/'
+			expected: '#\n/'
+		},
+		TestCase{
+			name: 'Standalone Without Newline'
+			desc: 'Standalone tags should not require a newline to follow them.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '#{{+boolean}}\n/\n  {{/boolean}}'
+			expected: '#\n/\n'
+		},
+		TestCase{
+			name: 'Padding'
+			desc: 'Superfluous in-tag whitespace should be ignored.'
+			data: DataModel({
+				'boolean': DataModel(true)
+			})
+			template: '|{{+ boolean }}={{/ boolean }}|'
+			expected: '|=|'
 		},
 	]
 }
