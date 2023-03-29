@@ -94,6 +94,15 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 				output.write_string(html.escape(value))
 				current = current.next
 			}
+			.raw_tag {
+				query_value := data_stack.query(current.token.content)!
+				if query_value !is string {
+					return error('Expected a string for "${current.token.content}')
+				}
+				value := query_value as string
+				output.write_string(value)
+				current = current.next
+			}
 			.positive_section {
 				query_value := data_stack.query(current.token.content)!
 				if query_value !is bool {
@@ -235,6 +244,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 			}
 			.close_section {
 				if sections.is_empty() {
+					dump(current)
 					return error('Found a stray closing tag.')
 				}
 				last_section := sections.pop()!

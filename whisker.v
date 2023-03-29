@@ -11,6 +11,7 @@ fn main() {
 		spec.partial_test,
 		spec.section_test,
 		spec.inverted_test,
+		spec.interpolation_test,
 	]
 	for suite in suites {
 		for test in suite.tests {

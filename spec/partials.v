@@ -43,7 +43,7 @@ Partials are external templates that can be plugged into the current template.
 		// 	})
 		// 	template: '{{>node}}'
 		// 	partials: {
-		// 		'node': '{{content}}<{{#nodes}}{{>node}}{{/nodes}}>'
+		// 		'node': '{{content}}<{{*nodes}}{{>node}}{{/nodes}}>'
 		// 	}
 		// 	expected: 'X<Y<>>'
 		// },

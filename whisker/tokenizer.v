@@ -17,6 +17,8 @@ enum TokenType {
 	comment
 	// Tags are used for simple interpolation queries
 	tag
+	// Raw tags are still interpolated but are not HTML escaped
+	raw_tag
 	// The different types of sections:
 	// Positive section is activated if the key is true
 	positive_section
@@ -295,6 +297,20 @@ fn extract_tokens(input string) ![]Token {
 			`>` {
 				Token{
 					token_type: .partial_section
+					content: tag_content[1..].trim_space()
+				}
+			}
+			`{` {
+				// move the index one more, for the closing }
+				index++
+				Token{
+					token_type: .raw_tag
+					content: tag_content[1..].trim_space()
+				}
+			}
+			`&` {
+				Token{
+					token_type: .raw_tag
 					content: tag_content[1..].trim_space()
 				}
 			}
