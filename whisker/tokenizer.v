@@ -128,7 +128,7 @@ fn extract_tokens(input string) ![]Token {
 		// Next, we move the index to the start of the tag
 		index += start_delim.len
 
-		if index >= input.len {
+		if index > input.len {
 			return error('Reached an unexpected end of input when trying to scan tag content.')
 		}
 
@@ -139,7 +139,7 @@ fn extract_tokens(input string) ![]Token {
 			mut new_start := strings.new_builder(whisker.default_content_size)
 			mut new_end := strings.new_builder(whisker.default_content_size)
 
-			if index >= input.len {
+			if index > input.len {
 				return error('Reached an unexpected end of input while trying to swap delimiters.')
 			}
 
@@ -147,7 +147,7 @@ fn extract_tokens(input string) ![]Token {
 			for input[index] in [` `, `\t`] {
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input when trying to scan tag content.')
 				}
 			}
@@ -156,7 +156,7 @@ fn extract_tokens(input string) ![]Token {
 				new_start.write_u8(input[index])
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input while trying to scan new opening delimiter.')
 				}
 			}
@@ -165,7 +165,7 @@ fn extract_tokens(input string) ![]Token {
 			for input[index] in [` `, `\t`] {
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input while trying to find new closing delimiter.')
 				}
 			}
@@ -174,7 +174,7 @@ fn extract_tokens(input string) ![]Token {
 				new_end.write_u8(input[index])
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input while trying to scan new closing delimiter.')
 				}
 			}
@@ -183,7 +183,7 @@ fn extract_tokens(input string) ![]Token {
 			for input[index] in [` `, `\t`] {
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input while trying to find new closing delimiter.')
 				}
 			}
@@ -199,7 +199,7 @@ fn extract_tokens(input string) ![]Token {
 				}
 				index++
 
-				if index >= input.len {
+				if index > input.len {
 					return error('Reached an unexpected end of input while trying to end swap delimiter section.')
 				}
 			}

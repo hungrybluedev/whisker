@@ -91,5 +91,104 @@ Delimiter swap tags can be standalone tags.
 ]
 '
 		},
+		TestCase{
+			name: 'Partial Inheritance'
+			desc: 'Delimiters set in a parent template should not affect a partial.'
+			data: DataModel({
+				'value': DataModel('yes')
+			})
+			partials: {
+				'include': '.{{value}}.'
+			}
+			template: '
+[ {{>include}} ]
+{{= | | =}}
+[ |>include| ]
+'
+			expected: '
+[ .yes. ]
+[ .yes. ]
+'
+		},
+		TestCase{
+			name: 'Post-Partial Behavior'
+			desc: 'Delimiters set in a partial should not affect the parent template.'
+			data: DataModel({
+				'value': DataModel('yes')
+			})
+			partials: {
+				'include': '.{{value}}. {{= | | =}} .|value|.'
+			}
+			template: '
+[ {{>include}} ]
+[ .{{value}}.  .|value|. ]
+'
+			expected: '
+[ .yes.  .yes. ]
+[ .yes.  .|value|. ]
+'
+		},
+		TestCase{
+			name: 'Surrounding Whitespace'
+			desc: 'Surrounding whitespace should be left untouched.'
+			template: '| {{=@ @=}} |'
+			expected: '|  |'
+		},
+		TestCase{
+			name: 'Outlying Whitespace (Inline)'
+			desc: 'Whitespace should be left untouched.'
+			template: ' | {{=@ @=}}\n'
+			expected: ' | \n'
+		},
+		TestCase{
+			name: 'Standalone Tag'
+			desc: 'Standalone lines should be removed from the template.'
+			template: '
+Begin.
+{{=@ @=}}
+End.
+'
+			expected: '
+Begin.
+End.
+'
+		},
+		TestCase{
+			name: 'Indented Standalone Tag'
+			desc: 'Indented standalone lines should be removed from the template.'
+			template: '
+Begin.
+{{=@ @=}}
+End.
+'
+			expected: '
+Begin.
+End.
+'
+		},
+		TestCase{
+			name: 'Standalone Line Endings'
+			desc: '"\r\n" should be considered a newline for standalone tags.'
+			template: '|\r\n{{= @ @ =}}\r\n|'
+			expected: '|\r\n|'
+		},
+		TestCase{
+			name: 'Standalone Without Previous Line'
+			desc: 'Standalone tags should not require a newline to precede them.'
+			template: '  {{=@ @=}}\n='
+			expected: '='
+		},
+		TestCase{
+			name: 'Standalone Without Newline'
+			desc: ' Standalone tags should not require a newline to follow them.'
+			template: '=\n  {{=@ @=}}'
+			expected: '=\n'
+		},
+		TestCase{
+			name: 'Pair with Padding'
+			desc: ' Superfluous in-tag whitespace should be ignored.'
+			template: '|{{= @   @ =}}|'
+			expected: '||'
+		},
 	]
 }
