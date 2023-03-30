@@ -1,0 +1,11 @@
+<main>
+    <h1>{{page_title}}</h1>
+    <p>{{introduction}}</p>
+    <ul>
+        {{+has_list}}
+        {{*items}}
+        <li>{{.}}</li>
+        {{/items}}
+        {{/has_list}}
+    </ul>
+</main>
