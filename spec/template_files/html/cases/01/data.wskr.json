@@ -1,0 +1,10 @@
+{
+  "page_title": "Home",
+  "introduction": "Welcome to the demo home page for whisker the template engine.",
+  "has_list": true,
+  "items": [
+    "This is a list item",
+    "This is another list item",
+    "This is a third list item"
+  ]
+}
