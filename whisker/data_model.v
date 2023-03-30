@@ -24,7 +24,7 @@ pub fn (data DataModel) clone() DataModel {
 }
 
 pub fn (data DataModel) str() string {
-	result_node := data.to_json_node() or {}
+	result_node := data.to_json_node() or { json2.null }
 	result := result_node.prettify_json_str()
 	return if !result.contains_any('{}') {
 		'{\n${whisker.data_indent}".": ${result}\n}'
