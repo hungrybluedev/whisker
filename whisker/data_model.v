@@ -1,6 +1,5 @@
 module whisker
 
-import strings
 import x.json2
 
 const data_indent = '\t'
@@ -25,7 +24,8 @@ pub fn (data DataModel) clone() DataModel {
 }
 
 pub fn (data DataModel) str() string {
-	result := data.internal_str(0)
+	result_node := data.to_json_node() or {}
+	result := result_node.prettify_json_str()
 	return if !result.contains_any('{}') {
 		'{\n${whisker.data_indent}".": ${result}\n}'
 	} else {
@@ -33,70 +33,28 @@ pub fn (data DataModel) str() string {
 	}
 }
 
-fn escape(content string) string {
-	return content.replace_each([
-		'"',
-		'\\"',
-	])
-}
-
 pub fn (data DataModel) json_str() string {
 	return data.str()
 }
 
-fn (data DataModel) internal_str(depth int) string {
-	padding := whisker.data_indent.repeat(depth)
+fn (data DataModel) to_json_node() !json2.Any {
 	return match data {
-		bool {
-			json
-		}
-		string {
-			escaped := escape(data)
-			'"${escaped}"'
+		bool, string {
+			json2.Any(data)
 		}
 		[]DataModel {
-			mut output := strings.new_builder(data.len * 4 + 10)
-
-			new_padding := padding + whisker.data_indent
-			output.write_string('[\n')
-			mut needs_newline := false
-
+			mut any_list := []json2.Any{cap: data.len}
 			for item in data {
-				if needs_newline {
-					output.write_string(',\n')
-				} else {
-					needs_newline = true
-				}
-				output.write_string(new_padding)
-				output.write_string(item.internal_str(depth + 1))
+				any_list << item.to_json_node()!
 			}
-			output.write_string('\n')
-			output.write_string(padding)
-			output.write_string(']')
-			output.str()
+			any_list
 		}
 		map[string]DataModel {
-			mut output := strings.new_builder(data.len * 4 + 10)
-
-			new_padding := padding + whisker.data_indent
-			output.write_string('{\n')
-			mut needs_newline := false
-
-			for key, value in data {
-				if needs_newline {
-					output.write_string(',\n')
-				} else {
-					needs_newline = true
-				}
-				output.write_string(new_padding)
-				output.write_string('"${escape(key)}"')
-				output.write_string(': ')
-				output.write_string(value.internal_str(depth + 1))
+			mut any_map := map[string]json2.Any{}
+			for key, item in data {
+				any_map[key] = item.to_json_node()!
 			}
-			output.write_string('\n')
-			output.write_string(padding)
-			output.write_string('}')
-			output.str()
+			any_map
 		}
 	}
 }
