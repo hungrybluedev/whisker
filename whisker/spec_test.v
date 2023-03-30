@@ -3,7 +3,7 @@ module main
 import whisker
 import spec
 
-const suites = [
+const spec_test_suites = [
 	spec.comment_tests,
 	spec.delimiter_tests,
 	spec.partial_test,
@@ -13,7 +13,7 @@ const suites = [
 ]
 
 fn test_full_spec() {
-	for suite in suites {
+	for suite in spec_test_suites {
 		for test in suite.tests {
 			println('${suite.name}: ${test.name}')
 			template := whisker.new_template(test.template, test.partials)!
