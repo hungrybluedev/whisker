@@ -1,0 +1,16 @@
+{
+  "first_article": {
+    "id": "1",
+    "title": "Linked Lists are Interesting",
+    "body": "This is especially true if you have pointers other than the next pointer."
+  },
+  "remaining_articles": [
+    {
+      "id": "2",
+      "title": "Dynamic Arrays are Good Too",
+      "body": "Unfortunately, insertion will break relative indices."
+    }
+  ],
+  "username": "hungrybluedev",
+  "fullname": "Subhomoy Haldar"
+}

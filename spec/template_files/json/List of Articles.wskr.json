@@ -1,0 +1,11 @@
+{
+  "articles": [
+        {{#first_article}}
+        {{>article}}
+        {{/first_article}}
+        {{*remaining_articles}}
+        ,{{>article}}
+        {{/remaining_articles}}
+  ],
+  "author": {{>author}}
+}

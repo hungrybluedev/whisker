@@ -1,6 +1,8 @@
 module main
 
 import whisker { DataModel }
+import os
+import x.json2
 
 fn test_simple_json_api() {
 	// Demonstrates the following:
@@ -46,7 +48,24 @@ fn test_simple_json_api() {
 }
 
 fn test_json_template_files() {
+	partials := {
+		'article': 'spec/template_files/json/Article.partial.wskr.json'
+		'author':  'spec/template_files/json/Author.partial.wskr.json'
+	}
+	input := 'spec/template_files/json/List of Articles.wskr.json'
+	mut template := whisker.load_template(input: input, partials: partials)!
+
+	data := whisker.from_json(os.read_file('spec/template_files/json/Articles.data.wskr.json')!)!
+	raw_output_string := template.run(data)!
+	pretty_output_string := json2.raw_decode(raw_output_string)!.prettify_json_str()
+
+	raw_expected_string := os.read_file('spec/template_files/json/List of Articles.json')!
+	pretty_expected_string := json2.raw_decode(raw_expected_string)!.prettify_json_str()
+
+	// dump(pretty_output_string)
+	assert pretty_output_string == pretty_expected_string
 }
 
 fn test_simple_html_header() {
+
 }
