@@ -133,7 +133,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 			.tag {
 				query_value := data_stack.query(current.token.content)!
 				if query_value !is string {
-					return error('Expected a string for "${current.token.content}')
+					return error('Expected a string for "${current.token.content}"')
 				}
 				value := query_value as string
 				output.write_string(html.escape(value))
@@ -142,7 +142,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 			.raw_tag {
 				query_value := data_stack.query(current.token.content)!
 				if query_value !is string {
-					return error('Expected a string for "${current.token.content}')
+					return error('Expected a string for "${current.token.content}"')
 				}
 				value := query_value as string
 				output.write_string(value)
@@ -151,7 +151,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 			.positive_section {
 				query_value := data_stack.query(current.token.content)!
 				if query_value !is bool {
-					return error('Expected a bool for "${current.token.content}')
+					return error('Expected a bool for "${current.token.content}"')
 				}
 				switch := query_value as bool
 				if !switch {
@@ -167,7 +167,7 @@ pub fn (template WhiskerTemplate) run(context DataModel) !string {
 			.negative_section {
 				query_value := data_stack.query(current.token.content)!
 				if query_value !is bool {
-					return error('Expected a bool for "${current.token.content}')
+					return error('Expected a bool for "${current.token.content}"')
 				}
 				switch := query_value as bool
 				if switch {
