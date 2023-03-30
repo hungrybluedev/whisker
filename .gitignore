@@ -17,3 +17,6 @@ bin/
 
 # Ignore personal notes and scratch files
 scratch
+
+# Ignore generated spec duplicate
+spec/gen
