@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ["ubuntu", "macos", "windows"]
+    runs-on: ${{ matrix.os }}-latest
+
+    steps:
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          stable: true
+
+      - name: Checkout ${{ github.event.repository.name }}
+        uses: actions/checkout@v3.3.0
+
+      - name: Check if code is formatted
+        run: |
+          v fmt -diff .
+          v fmt -verify .
+      
+      - name: Run unit tests
+        run: v test .
+      
+      - name: Build ${{ github.event.repository.name }}
+        run: v .
