@@ -2,7 +2,7 @@ module whisker
 
 import os
 
-pub struct WhiskerTemplate {
+pub struct Template {
 pub:
 	tokens   []Token
 	partials map[string][]Token
@@ -14,9 +14,9 @@ pub struct TemplateConfig {
 	partials map[string]string = {}
 }
 
-pub fn new_template(config TemplateConfig) !WhiskerTemplate {
+pub fn new_template(config TemplateConfig) !Template {
 	if config.input.len == 0 {
-		return WhiskerTemplate{}
+		return Template{}
 	}
 
 	mut tokenized_partials := map[string][]Token{}
@@ -25,7 +25,7 @@ pub fn new_template(config TemplateConfig) !WhiskerTemplate {
 		tokenized_partials[label] = tokenize(partial)!
 	}
 
-	return WhiskerTemplate{
+	return Template{
 		tokens: tokenize(config.input)!
 		partials: tokenized_partials
 	}
@@ -36,7 +36,7 @@ struct Section {
 	contexts []DataModel
 }
 
-pub fn load_template(config TemplateConfig) !WhiskerTemplate {
+pub fn load_template(config TemplateConfig) !Template {
 	input := os.read_file(config.input)!
 
 	mut partial_contents := map[string]string{}

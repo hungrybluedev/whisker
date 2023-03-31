@@ -101,7 +101,7 @@ fn add_jumps(head &Node) ! {
 	}
 }
 
-pub fn (template WhiskerTemplate) run(context DataModel) !string {
+pub fn (template Template) run(context DataModel) !string {
 	mut main_program := build_node_tree(template.tokens)!
 
 	if unsafe { main_program.head == nil } {
