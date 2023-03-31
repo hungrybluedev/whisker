@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 3840 2160" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <rect id="Artboard1" x="0" y="0" width="3840" height="2160" style="fill:none;"/>
-    <g id="Artboard11" serif:id="Artboard1">
-        <g transform="matrix(2.62161,0,0,2.62161,-4823.54,-2120.3)">
-            <text x="1955.48px" y="1352.31px" style="font-family:'Alkatra-Regular', 'Alkatra', cursive;font-size:380.161px;fill:rgb(39,39,39);">whisk<tspan x="2858.36px " y="1352.31px ">e</tspan>r</text>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 3840 1197" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,0.848486,0,86.4959)">
+        <path d="M3655.15,185.274C3516.26,-187.971 2994.51,42.467 2736.95,69.057C1503.91,196.356 544.314,0 544.314,0C472.304,0 401.722,1.596 330.525,11.908C287.898,18.083 244.222,28.614 205.118,47.047C180.123,58.829 165.503,67.936 144.114,85.445C132.457,94.988 121.2,108.037 112.295,120.106C55.321,197.322 70.678,305.85 97.194,391.372C101.776,406.149 106.627,420.85 111.956,435.374C117.782,451.255 124.033,466.986 130.648,482.555C137.866,499.545 145.484,516.37 153.445,533.025C162.112,551.157 171.088,569.149 180.522,586.895C196.772,617.46 217.925,646.861 227.004,680.861C240.6,731.776 265.668,955.904 284.351,1013.52C302.731,1070.21 332.527,1126.14 380.955,1162.81C400.551,1177.65 413.617,1185.5 435.983,1195.71C499.512,1224.7 573.927,1228.1 642.301,1222.49C728.182,1215.44 812.016,1195.3 894.16,1169.94C930.986,1158.57 991.308,1137.68 1033.5,1126.49C1117.35,1104.27 1204.75,1094.52 1290.95,1087.54C1421.49,1076.98 1552.07,1075.31 1682.96,1076.58C1824.15,1077.96 1965.43,1082.56 2106.39,1090.75C2484.9,1112.73 3155.2,1258.53 3389.16,1201.11C3559.42,1159.32 3463.26,940.026 3614.76,902.417C3808.68,854.276 3751.55,444.34 3655.15,185.274Z" style="fill:white;"/>
+    </g>
+    <g transform="matrix(2.62161,0,0,2.62161,-4823.54,-2607.88)">
+        <text x="1955.48px" y="1352.31px" style="font-family:'Alkatra-Regular', 'Alkatra', cursive;font-size:380.161px;fill:rgb(39,39,39);">whisk<tspan x="2858.36px " y="1352.31px ">e</tspan>r</text>
     </g>
 </svg>
