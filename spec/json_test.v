@@ -65,7 +65,3 @@ fn test_json_template_files() {
 	// dump(pretty_output_string)
 	assert pretty_output_string == pretty_expected_string
 }
-
-fn test_simple_html_header() {
-
-}
