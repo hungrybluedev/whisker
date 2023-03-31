@@ -202,7 +202,14 @@ the [`spec`](src/spec) directory.
 
 ## Installation
 
-TODO: Add `v install` instructions.
+Run the following to install _whisker_ from GitHub using V's package manager:
+
+```
+v install --git https://github.com/hungrybluedev/whisker
+```
+
+Now, in your project, you can `import hungrybluedev.whisker` and use _whisker_
+right away!
 
 ## Usage
 
@@ -243,6 +250,9 @@ which differ in content but not semantic structure.
    use `os.read_file(path_to_json)` to read the JSON contents and then plug this
    into the `from_json` function.
 
+It is not necessary, but it is recommended to use filenames that
+contain `*.wskr.*` somewhere in the file name.
+
 ## The CLI
 
 _whisker_ may also be used as a standalone command-line program to process
@@ -251,7 +261,8 @@ simplicity.
 
 Build `src/whisker_cli` and run `whisker --help` for usage instructions.
 
-Check [whisker_cli_test.v](src/whisker_cli/whisker_cli_test.v) for a concrete demonstration.
+Check [whisker_cli_test.v](src/whisker_cli/whisker_cli_test.v) for a concrete
+demonstration.
 
 ## License
 
