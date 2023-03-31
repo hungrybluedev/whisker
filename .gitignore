@@ -19,4 +19,4 @@ bin/
 scratch
 
 # Ignore generated spec duplicate
-src/spec/gen
+spec/gen

@@ -195,10 +195,10 @@ Output
 ```
 
 All the examples shown here are tested in CI in
-the [readme_test.v](src/spec/readme_test.v) file.
+the [readme_test.v](spec/readme_test.v) file.
 
 For the full specification, refer to the unit tests and test cases in
-the [`spec`](src/spec) directory.
+the [`spec`](spec) directory.
 
 ## Installation
 
@@ -259,9 +259,9 @@ _whisker_ may also be used as a standalone command-line program to process
 template files. It does not support direct template string input for the sake of
 simplicity.
 
-Build `src/whisker_cli` and run `whisker --help` for usage instructions.
+Build `whisker_cli` and run `whisker --help` for usage instructions.
 
-Check [whisker_cli_test.v](src/whisker_cli/whisker_cli_test.v) for a concrete
+Check [whisker_cli_test.v](whisker_cli/whisker_cli_test.v) for a concrete
 demonstration.
 
 ## License
