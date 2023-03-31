@@ -3,7 +3,7 @@ module main
 import v.vmod
 
 const (
-	embedded_vmod = $embed_file('v.mod', .zlib)
+	embedded_vmod = $embed_file('../v.mod', .zlib)
 	manifest      = vmod.decode(embedded_vmod.to_string()) or {
 		eprintln('Could not decode the v.mod file. Please restore to original state.')
 		exit(1)

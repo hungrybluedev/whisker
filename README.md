@@ -251,7 +251,7 @@ simplicity.
 
 Build and run `whisker --help` for usage instructions.
 
-Check [whisker_cli_test.v](src/whisker_cli_test.v) for a concrete demonstration.
+Check [whisker_cli_test.v](src/whisker_cli/whisker_cli_test.v) for a concrete demonstration.
 
 ## License
 
