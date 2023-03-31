@@ -249,7 +249,7 @@ _whisker_ may also be used as a standalone command-line program to process
 template files. It does not support direct template string input for the sake of
 simplicity.
 
-Build and run `whisker --help` for usage instructions.
+Build `src/whisker_cli` and run `whisker --help` for usage instructions.
 
 Check [whisker_cli_test.v](src/whisker_cli/whisker_cli_test.v) for a concrete demonstration.
 

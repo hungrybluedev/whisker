@@ -6,7 +6,7 @@ import net.html
 fn test_whisker_cli() {
 	cases := os.ls('./src/spec/template_files/html/cases')!
 	for case in cases {
-		result := os.execute_or_panic('${os.quoted_path(@VEXE)} run .' +
+		result := os.execute_or_panic('${os.quoted_path(@VEXE)} run src/whisker_cli' +
 			' --input ./src/spec/template_files/html/base.wskr.html' +
 			' --data ./src/spec/template_files/html/cases/${case}/data.wskr.json' +
 			' --partials head:./src/spec/template_files/html/head.wskr.html,' +
