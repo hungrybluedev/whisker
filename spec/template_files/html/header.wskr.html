@@ -5,6 +5,12 @@
             <li><a href="#">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
+            {{+logged_in}}
+            <li><a href="#">Dashboard</a></li>
+            {{/logged_in}}
+            {{-logged_in}}
+            <li><a href="#">Sign In</a></li>
+            {{/logged_in}}
         </ul>
     </nav>
 </header>

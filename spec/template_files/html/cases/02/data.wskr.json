@@ -1,0 +1,10 @@
+{
+  "page_title": "Dashboard",
+  "introduction": "Demo dashboard page with conditionally rendered content.",
+  "has_list": false,
+  "items": [],
+  "logged_in": true,
+  "user": {
+    "name": "hungrybluedev"
+  }
+}

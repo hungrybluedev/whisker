@@ -1,11 +1,14 @@
 <main>
     <h1>{{page_title}}</h1>
     <p>{{introduction}}</p>
+    {{+logged_in}}
+    <p>Currently logged in as {{user.name}}</p>
+    {{/logged_in}}
+    {{+has_list}}
     <ul>
-        {{+has_list}}
         {{*items}}
         <li>{{.}}</li>
         {{/items}}
-        {{/has_list}}
     </ul>
+    {{/has_list}}
 </main>
