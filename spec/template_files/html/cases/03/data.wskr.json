@@ -5,7 +5,7 @@
   "items": [],
   "logged_in": true,
   "user": {
-    "name": "hungrybluedev",
-    "admin": false
+    "name": "sysadmin",
+    "admin": true
   }
 }

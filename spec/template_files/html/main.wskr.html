@@ -2,7 +2,7 @@
     <h1>{{page_title}}</h1>
     <p>{{introduction}}</p>
     {{+logged_in}}
-    <p>Currently logged in as {{user.name}}</p>
+    <p>Currently logged in as {{user.name}}{{+user.admin}} (Administrator){{/user.admin}}</p>
     {{/logged_in}}
     {{+has_list}}
     <ul>
