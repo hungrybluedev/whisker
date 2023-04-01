@@ -41,7 +41,8 @@ You must have V installed. Refer to
 the [official instructions](https://github.com/vlang/v/#installing-v-from-source)
 for help with installation.
 
-If you already have V installed, use `v up` to update the
+If you already have V installed, use `v up` to update the toolchain and standard
+library.
 
 ## Installation
 
@@ -51,7 +52,8 @@ Run the following to install _whisker_ from GitHub using V's package manager:
 v install --git https://github.com/hungrybluedev/whisker
 ```
 
-Now, in your project, you can `import hungrybluedev.whisker` and use _whisker_
+This should install in `hungrybluedev.whisker` first and then relocate it
+to `whisker`. Now, in your project, you can `import whisker` and use _whisker_
 right away!
 
 ## Usage
