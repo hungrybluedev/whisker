@@ -13,6 +13,13 @@ fn test_normal_text() {
 	assert simple_template.run(false)! == 'Sample text'
 }
 
+fn test_first_example() {
+	simple_template := template.from_strings(input: 'Hello, {{name}}!')!
+	data := datamodel.from_json('{"name": "World"}')!
+
+	assert simple_template.run(data)! == 'Hello, World!'
+}
+
 fn test_double_curly_braces_indicate_sections() {
 	input := 'Hello, {{name}}!'
 
