@@ -63,10 +63,10 @@ directly from template strings or be loaded from disk from template files. A
 single template should be reused for different data models to produce outputs
 which differ in content but not semantic structure.
 
-> NOTE: There might be slight white-space consistencies between the generated
+> **Note**
+> There might be slight white-space consistencies between the generated
 > and expected results. For machine-verification, it is recommended to compare
-> the parsed
-> and reconstructed outputs for your particular file format.
+> the parsed and reconstructed outputs for your particular file format.
 
 ### Direct String Templates
 
