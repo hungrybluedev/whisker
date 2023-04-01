@@ -12,7 +12,7 @@ fn test_html_template_files() {
 		'head':   'spec/template_files/html/head.wskr.html'
 		'main':   'spec/template_files/html/main.wskr.html'
 	}
-	mut html_template := template.load_file(
+	html_template := template.load_file(
 		input: 'spec/template_files/html/base.wskr.html'
 		partials: partials
 	)!
