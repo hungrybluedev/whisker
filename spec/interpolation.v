@@ -1,6 +1,6 @@
 module spec
 
-import whisker { DataModel }
+import datamodel { DataModel }
 
 pub const interpolation_test = TestList{
 	name: 'Interpolation'

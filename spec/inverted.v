@@ -1,6 +1,6 @@
 module spec
 
-import whisker { DataModel }
+import datamodel { DataModel }
 
 pub const inverted_test = TestList{
 	name: 'Inverted Sections'

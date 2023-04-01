@@ -1,12 +1,12 @@
 module spec
 
-import whisker
+import datamodel { DataModel }
 
 pub struct TestCase {
 pub:
 	name     string
 	desc     string
-	data     whisker.DataModel = whisker.DataModel(false)
+	data     DataModel = DataModel(false)
 	template string
 	expected string
 	partials map[string]string = {}

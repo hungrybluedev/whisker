@@ -2,7 +2,8 @@ module main
 
 import flag
 import os
-import whisker
+import datamodel
+import template
 
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
@@ -32,17 +33,17 @@ fn main() {
 	validate_path('input', input)
 
 	partial_map := extract_partials(partials)
-	clean_data := whisker.from_json(os.read_file(data) or { '{}' }) or {
+	clean_data := datamodel.from_json(os.read_file(data) or { '{}' }) or {
 		eprintln('Could not obtain the data for the template from ${data}')
 		exit(1)
 	}
 
-	mut template := whisker.load_template(input: input, partials: partial_map) or {
+	file_template := template.load_file(input: input, partials: partial_map) or {
 		eprintln('Failed to load a template with the following error:')
 		eprintln(err)
 		exit(1)
 	}
-	result := template.run(clean_data) or {
+	result := file_template.run(clean_data) or {
 		eprintln('Failed to generate output with the following error:')
 		eprintln(err)
 		exit(1)

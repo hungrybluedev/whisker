@@ -1,29 +1,30 @@
 module main
 
-import whisker
+import template
+import datamodel
 
 fn test_normal_text() {
 	input := 'Sample text'
 
-	mut template := whisker.new_template(
+	simple_template := template.from_strings(
 		input: input
 	)!
 
-	assert template.run(false)! == 'Sample text'
+	assert simple_template.run(false)! == 'Sample text'
 }
 
 fn test_double_curly_braces_indicate_sections() {
 	input := 'Hello, {{name}}!'
 
-	mut template := whisker.new_template(
+	simple_template := template.from_strings(
 		input: input
 	)!
 
-	data := whisker.from_json('{
+	data := datamodel.from_json('{
    	"name": "world"
 }')!
 
-	assert template.run(data)! == 'Hello, world!'
+	assert simple_template.run(data)! == 'Hello, world!'
 }
 
 fn test_changing_delimiters() {
@@ -34,12 +35,12 @@ fn main() {
 println('[greeting]')
 }"
 
-	data := whisker.from_json('{
+	data := datamodel.from_json('{
 "greeting": "Have a nice day!"
 }')!
 
-	mut template := whisker.new_template(input: input)!
-	assert template.run(data)!.trim_space() == "
+	delimiter_template := template.from_strings(input: input)!
+	assert delimiter_template.run(data)!.trim_space() == "
 module main
 
 fn main() {
@@ -58,10 +59,10 @@ fn test_boolean_positive_negative_sections() {
 </nav>
 '
 	data_list := [
-		whisker.from_json('{
+		datamodel.from_json('{
 			"logged_in": false,
 		}')!,
-		whisker.from_json('{
+		datamodel.from_json('{
 			"logged_in": true,
 			"user": {
 			  "name": "whisker"
@@ -90,10 +91,10 @@ fn test_boolean_positive_negative_sections() {
 ',
 	]
 
-	mut template := whisker.new_template(input: input)!
+	section_template := template.from_strings(input: input)!
 
 	for index, data in data_list {
-		assert template.run(data)! == outputs[index]
+		assert section_template.run(data)! == outputs[index]
 	}
 }
 
@@ -110,7 +111,7 @@ fn test_maps_lists_partials() {
 '
 	}
 
-	data := whisker.from_json('{
+	data := datamodel.from_json('{
 	"items": [
 		{
 			"name": "Banana",
@@ -123,9 +124,9 @@ fn test_maps_lists_partials() {
    ]
 }')!
 
-	mut template := whisker.new_template(input: input, partials: partials)!
+	advanced_template := template.from_strings(input: input, partials: partials)!
 
-	assert template.run(data)! == '
+	assert advanced_template.run(data)! == '
 <ol>
 <li>Banana: Rich in potassium and naturally sweet.</li>
 <li>Orange: High in Vitamin C and very refreshing.</li>

@@ -1,6 +1,6 @@
 module spec
 
-import whisker
+import datamodel { DataModel }
 
 pub const comment_tests = TestList{
 	name: 'Comments'
@@ -83,7 +83,7 @@ Comment tags can act as standalone tags (taking up a line, indented, etc).
 			name: 'Variable Name Collision'
 			desc: 'Comments must never render, even if variable with same name exists.'
 			data: {
-				'! comment':  whisker.DataModel('1')
+				'! comment':  DataModel('1')
 				'! comment ': '2'
 				'!comment':   '3'
 				'comment':    '4'

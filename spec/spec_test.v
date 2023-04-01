@@ -1,9 +1,10 @@
 module main
 
-import whisker
 import spec
 import os
 import x.json2
+import template
+import datamodel
 
 const spec_test_suites = [
 	spec.comment_tests,
@@ -18,8 +19,8 @@ fn test_full_spec() {
 	for suite in spec_test_suites {
 		for test in suite.tests {
 			println('${suite.name}: ${test.name}')
-			template := whisker.new_template(input: test.template, partials: test.partials)!
-			output := template.run(test.data)!
+			spec_template := template.from_strings(input: test.template, partials: test.partials)!
+			output := spec_template.run(test.data)!
 			// dump(output)
 			// dump(output.bytes())
 			// dump(test.expected)
@@ -50,7 +51,7 @@ fn test_exported_files() ! {
 		for test in suite.tests {
 			json_content := os.read_file('spec/gen/${suite.name}/${test.name}.wskr.json')!
 
-			decoded_data := whisker.from_json(json_content)!
+			decoded_data := datamodel.from_json(json_content)!
 			assert decoded_data == test.data
 		}
 	}

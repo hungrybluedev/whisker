@@ -1,6 +1,6 @@
 module spec
 
-import whisker { DataModel }
+import datamodel { DataModel }
 
 pub const delimiter_tests = TestList{
 	name: 'Delimiters'

@@ -1,6 +1,7 @@
 module main
 
-import whisker { DataModel }
+import datamodel { DataModel }
+import template
 import os
 import x.json2
 
@@ -40,9 +41,9 @@ fn test_simple_json_api() {
 	"value": "Valid string value"
 }',
 	]
-	template := whisker.new_template(input: input)!
+	json_template := template.from_strings(input: input)!
 	for index, data in test_data {
-		output := template.run(data)!
+		output := json_template.run(data)!
 		assert output == expected_values[index]
 	}
 }
@@ -53,10 +54,10 @@ fn test_json_template_files() {
 		'author':  'spec/template_files/json/Author.partial.wskr.json'
 	}
 	input := 'spec/template_files/json/List of Articles.wskr.json'
-	mut template := whisker.load_template(input: input, partials: partials)!
+	json_template := template.load_file(input: input, partials: partials)!
 
-	data := whisker.from_json(os.read_file('spec/template_files/json/Articles.data.wskr.json')!)!
-	raw_output_string := template.run(data)!
+	data := datamodel.from_json(os.read_file('spec/template_files/json/Articles.data.wskr.json')!)!
+	raw_output_string := json_template.run(data)!
 	pretty_output_string := json2.raw_decode(raw_output_string)!.prettify_json_str()
 
 	raw_expected_string := os.read_file('spec/template_files/json/List of Articles.json')!
