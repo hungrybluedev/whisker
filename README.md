@@ -148,7 +148,7 @@ Hello, {{name}}!
 
 #### Data
 
-```
+```json
 {
    "name": "world"
 }
@@ -164,7 +164,7 @@ Hello, world!
 
 #### Input
 
-```
+```v
 {{=[ ]=}}
 module main
 
@@ -175,7 +175,7 @@ fn main() {
 
 #### Data
 
-```
+```json
 {
    "greeting": "Have a nice day!"
 }
@@ -183,7 +183,7 @@ fn main() {
 
 #### Output
 
-```
+```v
 module main
 
 fn main() {
@@ -195,7 +195,7 @@ fn main() {
 
 #### Input
 
-```
+```html
 <nav>
 <ul>
 <li>Home</li>
@@ -208,7 +208,7 @@ fn main() {
 
 #### Data 1
 
-```
+```json
 {
    "logged_in": false,
 }
@@ -216,7 +216,7 @@ fn main() {
 
 #### Output 1
 
-```
+```html
 <nav>
 <ul>
 <li>Home</li>
@@ -229,7 +229,7 @@ fn main() {
 
 #### Data 2
 
-```
+```json
 {
    "logged_in": true,
    "user": {
@@ -240,7 +240,7 @@ fn main() {
 
 #### Output 2
 
-```
+```html
 
 <nav>
 <ul>
@@ -256,7 +256,7 @@ fn main() {
 
 #### Input
 
-```
+```html
 <ol>
 {{*items}}
 {{>item}}
@@ -266,13 +266,13 @@ fn main() {
 
 #### Partial: item
 
-```
+```html
 <li>{{name}}: {{description}}</li>
 ```
 
 #### Data
 
-```
+```json
 {
    "items": [
       {
@@ -289,7 +289,7 @@ fn main() {
 
 #### Output
 
-```
+```html
 <ol>
 <li>Banana: Rich in potassium and naturally sweet.</li>
 <li>Orange: High in Vitamin C and very refreshing.</li>
