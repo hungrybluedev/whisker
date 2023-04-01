@@ -43,6 +43,83 @@ for help with installation.
 
 If you already have V installed, use `v up` to update the
 
+## Installation
+
+Run the following to install _whisker_ from GitHub using V's package manager:
+
+```
+v install --git https://github.com/hungrybluedev/whisker
+```
+
+Now, in your project, you can `import hungrybluedev.whisker` and use _whisker_
+right away!
+
+## Usage
+
+The main struct is `whisker.template.Template` which can be generated either
+directly from template strings or be loaded from disk from template files. A
+single template should be reused for different data models to produce outputs
+which differ in content but not semantic structure.
+
+> NOTE: There might be slight white-space consistencies between the generated
+> and expected results. For machine-verification, it is recommended to compare
+> the parsed
+> and reconstructed outputs for your particular file format.
+
+### Direct String Templates
+
+1. **Load a template**:
+   Use `template.from_strings(input: input_str, partials: partial_map)`
+   to generate a template from direct string inputs. Here, `input_str` is
+   a `string` and `partial_map` is a `map[string]string`. The map's keys are the
+   names of the template that are replaced by the direct template strings. Leave
+   the partials field empty if there are none required.
+2. **Run with Data Model**: Use `run(data)` to generate the output string. The
+   data can be represented in V source code directly (refer to the spec for
+   examples), or it can be loaded from JSON (using
+   `datamodel.from_json(data_string)`).
+
+This is a copy-paste-able example to get started immediately:
+
+```v
+module main
+
+import whisker.datamodel
+import whisker.template
+
+fn main() {
+	simple_template := template.from_strings(input: 'Hello, {{name}}!')!
+	data := datamodel.from_json('{"name": "World"}')!
+
+	println(simple_template.run(data)!) // prints "Hello, World!"
+}
+```
+
+### Template Files
+
+1. **Load a template**:
+   Use `template.load_file(input: input_str, partials: partial_map)` to
+   generate a template from file names. The difference here is that instead of
+   providing content, you provide the relative file paths. The names of the
+   partials need to be exact though, so keep an eye on that.
+2. **Run with Data Model**: Same as before. You can
+   use `os.read_file(path_to_json)` to read the JSON contents and then plug this
+   into the `datamodel.from_json` function.
+
+It is not necessary, but it is recommended to use filenames that
+contain `*.wskr.*` somewhere in the file name.
+
+## The CLI
+
+_whisker_ may also be used as a standalone command-line program to process
+template files. It does not support direct template string input for the sake of
+simplicity.
+
+Build `whisker_cli` and run `whisker --help` for usage instructions.
+
+Check [whisker_cli_test.v](whisker_cli/whisker_cli_test.v) for a concrete
+demonstration.
+
 ## Syntax
 
 ### Normal Text Is Unaffected
@@ -199,70 +276,6 @@ the [readme_test.v](spec/readme_test.v) file.
 
 For the full specification, refer to the unit tests and test cases in
 the [`spec`](spec) directory.
-
-## Installation
-
-Run the following to install _whisker_ from GitHub using V's package manager:
-
-```
-v install --git https://github.com/hungrybluedev/whisker
-```
-
-Now, in your project, you can `import hungrybluedev.whisker` and use _whisker_
-right away!
-
-## Usage
-
-The main struct is `whisker.Template` which can be generated either directly
-from template strings or be loaded from disk from template files. It has to be
-mutable because the internal state changes as the template executes for a given
-data model.
-
-A single template should be reused for different data models to produce outputs
-which differ in content but not semantic structure.
-
-> NOTE: There might be slight white-space consistencies between the generated
-> and expected results. For machine-verification, it is recommended to compare
-> the parsed
-> and reconstructed outputs for your particular file format.
-
-### Direct String Templates
-
-1. **Load a template**:
-   Use `whisker.new_template(input: input_str, partials: partial_map)`
-   to generate a template from direct string inputs. Here, `input_str` is
-   a `string` and `partial_map` is a `map[string]string`. The map's keys are the
-   names of the template that are replaced by the direct template strings. Leave
-   the partials field empty if there are none required.
-2. **Run with Data Model**: Use `run(data)` to generate the output string. The
-   data can be represented in V source code directly (refer to the spec for
-   examples), or it can be loaded from JSON (using
-   `whisker.from_json(data_string)`).
-
-### Template Files
-
-1. **Load a template**:
-   Use `whisker.load_template(input: input_str, partials: partial_map)` to
-   generate a template from file names. The difference here is that instead of
-   providing content, you provide the relative file paths. The names of the
-   partials need to be exact though, so keep an eye on that.
-2. **Run with Data Model**: Same as before. You can
-   use `os.read_file(path_to_json)` to read the JSON contents and then plug this
-   into the `from_json` function.
-
-It is not necessary, but it is recommended to use filenames that
-contain `*.wskr.*` somewhere in the file name.
-
-## The CLI
-
-_whisker_ may also be used as a standalone command-line program to process
-template files. It does not support direct template string input for the sake of
-simplicity.
-
-Build `whisker_cli` and run `whisker --help` for usage instructions.
-
-Check [whisker_cli_test.v](whisker_cli/whisker_cli_test.v) for a concrete
-demonstration.
 
 ## License
 
