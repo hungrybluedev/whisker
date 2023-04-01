@@ -10,9 +10,11 @@ fn test_simple_json_api() {
 	// 1. Delimiter swap to [ and ]
 	// 2. Raw tag usage using & prefix
 	// 3. If the data is a string, pass in the quotes too.
-	input := '{{=[ ]=}}{
-	"value": [&value]
-}'
+	input := '
+	{{=[ ]=}}
+	{
+		"value": [&value]
+	}'.trim_indent()
 	test_data := [
 		DataModel({
 			'value': DataModel('42')
@@ -28,18 +30,22 @@ fn test_simple_json_api() {
 		}),
 	]
 	expected_values := [
-		'{
-	"value": 42
-}',
-		'{
-	"value": -147
-}',
-		'{
-	"value": 0
-}',
-		'{
-	"value": "Valid string value"
-}',
+		'
+		{
+			"value": 42
+		}'.trim_indent(),
+		'
+		{
+			"value": -147
+		}'.trim_indent(),
+		'
+		{
+			"value": 0
+		}'.trim_indent(),
+		'
+		{
+			"value": "Valid string value"
+		}'.trim_indent(),
 	]
 	json_template := template.from_strings(input: input)!
 	for index, data in test_data {

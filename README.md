@@ -1,6 +1,6 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src="./img/whisker logo.svg" width="300" alt="whisker logo"/>
+<img src="./docs/img/whisker logo.svg" width="300" alt="whisker logo"/>
 
 [vlang.io](https://vlang.io) | [hungrybluedev](https://hungrybluedev.in/)
 
@@ -191,7 +191,8 @@ Input
 <ul>
 <li>Home</li>
 <li>About</li>
-{{-logged_in}}<li>Log In</li>{{/logged_in}}{{+logged_in}}<li>Account: {{user.name}}</li>{{/logged_in}}
+{{-logged_in}}<li>Log In</li>{{/logged_in}}
+{{+logged_in}}<li>Account: {{user.name}}</li>{{/logged_in}}
 </ul>
 </nav>
 
@@ -209,6 +210,7 @@ Output 1
 <li>Home</li>
 <li>About</li>
 <li>Log In</li>
+
 </ul>
 </nav>
 
@@ -228,6 +230,7 @@ Output 2
 <ul>
 <li>Home</li>
 <li>About</li>
+
 <li>Account: whisker</li>
 </ul>
 </nav>
@@ -253,15 +256,15 @@ Partial: item
 Data
 ----
 {
-	"items": [
-		{
-			"name": "Banana",
-			"description": "Rich in potassium and naturally sweet."
-		},
-		{
-			"name": "Orange",
-			"description": "High in Vitamin C and very refreshing."
-		}
+   "items": [
+      {
+         "name": "Banana",
+         "description": "Rich in potassium and naturally sweet."
+      },
+      {
+         "name": "Orange",
+         "description": "High in Vitamin C and very refreshing."
+      }
    ]
 }
 

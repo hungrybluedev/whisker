@@ -33,6 +33,8 @@ fn main() {
 	validate_path('input', input)
 
 	partial_map := extract_partials(partials)
+
+	validate_path('data', data)
 	clean_data := datamodel.from_json(os.read_file(data) or { '{}' }) or {
 		eprintln('Could not obtain the data for the template from ${data}')
 		exit(1)
@@ -71,7 +73,7 @@ fn validate_path(name string, path string) {
 		exit(1)
 	}
 	if !os.exists(path) {
-		eprint('Invalid path: ${path} does not exist.')
+		eprintln('Invalid path: ${path} does not exist.')
 		exit(1)
 	}
 }
