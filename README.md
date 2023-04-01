@@ -126,55 +126,64 @@ demonstration.
 
 ### Normal Text Is Unaffected
 
-```
-Input
------
-Sample text
+#### Input
 
-Output
-------
+```
+Sample text
+```
+
+#### Output
+
+```
 Sample text
 ```
 
 ### Double Curly Braces Indicate Sections
 
-```
-Input
------
-Hello, {{name}}!
+#### Input
 
-Data
-----
+```
+Hello, {{name}}!
+```
+
+#### Data
+
+```
 {
    "name": "world"
 }
+```
 
+#### Output
 
-Output
-------
+```
 Hello, world!
 ```
 
 ### Changing Delimiters
 
+#### Input
+
 ```
-Input
------
 {{=[ ]=}}
 module main
 
 fn main() {
    println('[greeting]')
 }
+```
 
-Data
-----
+#### Data
+
+```
 {
    "greeting": "Have a nice day!"
 }
+```
 
-Output
-------
+#### Output
+
+```
 module main
 
 fn main() {
@@ -184,9 +193,9 @@ fn main() {
 
 ### Booleans, Positive, and Negative Sections
 
+#### Input
+
 ```
-Input
------
 <nav>
 <ul>
 <li>Home</li>
@@ -195,16 +204,19 @@ Input
 {{+logged_in}}<li>Account: {{user.name}}</li>{{/logged_in}}
 </ul>
 </nav>
+```
 
-Data 1
-------
+#### Data 1
+
+```
 {
    "logged_in": false,
 }
+```
 
+#### Output 1
 
-Output 1
---------
+```
 <nav>
 <ul>
 <li>Home</li>
@@ -213,19 +225,23 @@ Output 1
 
 </ul>
 </nav>
+```
 
-Data 2
-------
+#### Data 2
+
+```
 {
    "logged_in": true,
    "user": {
       "name": "whisker"
    }
 }
+```
 
+#### Output 2
 
-Output 2
---------
+```
+
 <nav>
 <ul>
 <li>Home</li>
@@ -238,23 +254,25 @@ Output 2
 
 ### Maps, Lists, and Partials
 
-```
-Input
------
+#### Input
 
+```
 <ol>
 {{*items}}
 {{>item}}
 {{/items}}
 </ol>
+```
 
-Partial: item
--------------
+#### Partial: item
+
+```
 <li>{{name}}: {{description}}</li>
+```
 
+#### Data
 
-Data
-----
+```
 {
    "items": [
       {
@@ -267,9 +285,11 @@ Data
       }
    ]
 }
+```
 
-Output
-------
+#### Output
+
+```
 <ol>
 <li>Banana: Rich in potassium and naturally sweet.</li>
 <li>Orange: High in Vitamin C and very refreshing.</li>
