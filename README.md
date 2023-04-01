@@ -117,9 +117,22 @@ _whisker_ may also be used as a standalone command-line program to process
 template files. It does not support direct template string input for the sake of
 simplicity.
 
-Build `whisker_cli` and run `whisker --help` for usage instructions.
+Build `whisker` with `v cmd/whisker` and run `cmd/whisker/whisker --help` for
+usage instructions. You can specify a `bin` subdirectory as output folder and
+add it to path as well:
 
-Check [whisker_cli_test.v](whisker_cli/whisker_cli_test.v) for a concrete
+```bash
+# Create an output directory
+mkdir cmd/bin
+
+# Build the executable
+v cmd/whisker -o cmd/bin/whisker
+
+# Run the executable
+cmd/bin/whisker --help
+```
+
+Check [whisker_cli_test.v](cmd/whisker_cli_test.v) for a concrete
 demonstration.
 
 ## Syntax
@@ -150,7 +163,7 @@ Hello, {{name}}!
 
 ```json
 {
-   "name": "world"
+  "name": "world"
 }
 ```
 
@@ -165,11 +178,11 @@ Hello, world!
 #### Input
 
 ```v
-{{=[ ]=}}
+{{ =   [ ]=}}
 module main
 
 fn main() {
-   println('[greeting]')
+println('[greeting]')
 }
 ```
 
@@ -177,7 +190,7 @@ fn main() {
 
 ```json
 {
-   "greeting": "Have a nice day!"
+  "greeting": "Have a nice day!"
 }
 ```
 
@@ -187,7 +200,7 @@ fn main() {
 module main
 
 fn main() {
-   println('Have a nice day!')
+	println('Have a nice day!')
 }
 ```
 
@@ -196,13 +209,18 @@ fn main() {
 #### Input
 
 ```html
+
 <nav>
-<ul>
-<li>Home</li>
-<li>About</li>
-{{-logged_in}}<li>Log In</li>{{/logged_in}}
-{{+logged_in}}<li>Account: {{user.name}}</li>{{/logged_in}}
-</ul>
+    <ul>
+        <li>Home</li>
+        <li>About</li>
+        {{-logged_in}}
+        <li>Log In</li>
+        {{/logged_in}}
+        {{+logged_in}}
+        <li>Account: {{user.name}}</li>
+        {{/logged_in}}
+    </ul>
 </nav>
 ```
 
@@ -210,20 +228,21 @@ fn main() {
 
 ```json
 {
-   "logged_in": false,
+  "logged_in": false
 }
 ```
 
 #### Output 1
 
 ```html
-<nav>
-<ul>
-<li>Home</li>
-<li>About</li>
-<li>Log In</li>
 
-</ul>
+<nav>
+    <ul>
+        <li>Home</li>
+        <li>About</li>
+        <li>Log In</li>
+
+    </ul>
 </nav>
 ```
 
@@ -231,10 +250,10 @@ fn main() {
 
 ```json
 {
-   "logged_in": true,
-   "user": {
-      "name": "whisker"
-   }
+  "logged_in": true,
+  "user": {
+    "name": "whisker"
+  }
 }
 ```
 
@@ -243,12 +262,12 @@ fn main() {
 ```html
 
 <nav>
-<ul>
-<li>Home</li>
-<li>About</li>
+    <ul>
+        <li>Home</li>
+        <li>About</li>
 
-<li>Account: whisker</li>
-</ul>
+        <li>Account: whisker</li>
+    </ul>
 </nav>
 ```
 
@@ -257,16 +276,18 @@ fn main() {
 #### Input
 
 ```html
+
 <ol>
-{{*items}}
-{{>item}}
-{{/items}}
+    {{*items}}
+    {{>item}}
+    {{/items}}
 </ol>
 ```
 
 #### Partial: item
 
 ```html
+
 <li>{{name}}: {{description}}</li>
 ```
 
@@ -274,25 +295,26 @@ fn main() {
 
 ```json
 {
-   "items": [
-      {
-         "name": "Banana",
-         "description": "Rich in potassium and naturally sweet."
-      },
-      {
-         "name": "Orange",
-         "description": "High in Vitamin C and very refreshing."
-      }
-   ]
+  "items": [
+    {
+      "name": "Banana",
+      "description": "Rich in potassium and naturally sweet."
+    },
+    {
+      "name": "Orange",
+      "description": "High in Vitamin C and very refreshing."
+    }
+  ]
 }
 ```
 
 #### Output
 
 ```html
+
 <ol>
-<li>Banana: Rich in potassium and naturally sweet.</li>
-<li>Orange: High in Vitamin C and very refreshing.</li>
+    <li>Banana: Rich in potassium and naturally sweet.</li>
+    <li>Orange: High in Vitamin C and very refreshing.</li>
 </ol>
 ```
 
