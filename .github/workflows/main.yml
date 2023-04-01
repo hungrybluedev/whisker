@@ -32,6 +32,5 @@ jobs:
 
       - name: Build ${{ github.event.repository.name }}
         run: |
-          mkdir cmd/bin
           v cmd/whisker -o cmd/bin/whisker
           cmd/bin/whisker --help
