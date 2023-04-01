@@ -40,7 +40,7 @@ fn test_changing_delimiters() {
 	module main
 
 	fn main() {
-	println('[greeting]')
+		println('[greeting]')
 	}".trim_indent()
 
 	data := datamodel.from_json('{
@@ -52,7 +52,7 @@ fn test_changing_delimiters() {
 	module main
 
 	fn main() {
-	println('Have a nice day!')
+		println('Have a nice day!')
 	}".trim_indent()
 }
 
