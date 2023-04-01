@@ -178,11 +178,11 @@ Hello, world!
 #### Input
 
 ```v
-{{ =   [ ]=}}
+{{=[ ]=}}
 module main
 
 fn main() {
-println('[greeting]')
+    println('[greeting]')
 }
 ```
 
