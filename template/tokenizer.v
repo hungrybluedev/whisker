@@ -1,4 +1,4 @@
-module whisker
+module template
 
 import strings
 import math { abs }
@@ -67,10 +67,10 @@ fn tokenize(input string) ![]Token {
 
 fn extract_tokens(input string) ![]Token {
 	mut tokens := []Token{}
-	mut buffer := strings.new_builder(whisker.default_content_size)
+	mut buffer := strings.new_builder(template.default_content_size)
 
-	mut start_delim := whisker.default_start_delimiter
-	mut end_delim := whisker.default_end_delimiter
+	mut start_delim := template.default_start_delimiter
+	mut end_delim := template.default_end_delimiter
 
 	mut index := 0
 	for index < input.len {
@@ -138,8 +138,8 @@ fn extract_tokens(input string) ![]Token {
 		if input[index] == `=` {
 			index++
 
-			mut new_start := strings.new_builder(whisker.default_content_size)
-			mut new_end := strings.new_builder(whisker.default_content_size)
+			mut new_start := strings.new_builder(template.default_content_size)
+			mut new_end := strings.new_builder(template.default_content_size)
 
 			if index > input.len {
 				return error('Reached an unexpected end of input while trying to swap delimiters.')
@@ -330,7 +330,7 @@ struct TokenLine {
 }
 
 fn (line TokenLine) str() string {
-	mut buffer := strings.new_builder(whisker.default_content_size)
+	mut buffer := strings.new_builder(template.default_content_size)
 	buffer.write_string('\n((')
 	for index, token in line.tokens {
 		if index != 0 {
@@ -398,7 +398,7 @@ fn split_into_lines(tokens []Token, line_ending string) []TokenLine {
 
 fn simplify_tokens(tokens []Token) ![]Token {
 	mut simplified_tokens := []Token{cap: tokens.len}
-	mut buffer := strings.new_builder(whisker.default_content_size)
+	mut buffer := strings.new_builder(template.default_content_size)
 	for token in tokens {
 		match token.token_type {
 			.comment {

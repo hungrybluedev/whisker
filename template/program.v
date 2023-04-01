@@ -1,8 +1,9 @@
-module whisker
+module template
 
 import strings
 import encoding.html
 import datatypes
+import datamodel { DataModel }
 
 [heap]
 struct Node {

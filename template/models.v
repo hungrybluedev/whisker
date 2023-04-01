@@ -1,6 +1,7 @@
-module whisker
+module template
 
 import os
+import datamodel { DataModel }
 
 pub struct Template {
 pub:
@@ -14,7 +15,7 @@ pub struct TemplateConfig {
 	partials map[string]string = {}
 }
 
-pub fn new_template(config TemplateConfig) !Template {
+pub fn from_strings(config TemplateConfig) !Template {
 	if config.input.len == 0 {
 		return Template{}
 	}
@@ -36,7 +37,7 @@ struct Section {
 	contexts []DataModel
 }
 
-pub fn load_template(config TemplateConfig) !Template {
+pub fn load_file(config TemplateConfig) !Template {
 	input := os.read_file(config.input)!
 
 	mut partial_contents := map[string]string{}
@@ -44,5 +45,5 @@ pub fn load_template(config TemplateConfig) !Template {
 		partial_contents[partial_name] = os.read_file(path)!
 	}
 
-	return new_template(input: input, partials: partial_contents)
+	return from_strings(input: input, partials: partial_contents)
 }

@@ -1,4 +1,6 @@
-module whisker
+module template
+
+import datamodel { DataModel }
 
 struct DataStack {
 mut:
