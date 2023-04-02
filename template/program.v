@@ -5,6 +5,9 @@ import encoding.html
 import datatypes
 import datamodel { DataModel }
 
+struct Section {
+	name string
+}
 [heap]
 struct Node {
 	token Token
@@ -14,7 +17,7 @@ mut:
 	jump &Node = unsafe { nil }
 }
 
-pub fn (node Node) str() string {
+fn (node Node) str() string {
 	next := if isnil(node.next) { '' } else { node.next.str() }
 	skip := if isnil(node.jump) { '' } else { node.jump.str() }
 	return '{${node.token}}\n${next}\n${skip}'.trim_space()
@@ -28,7 +31,7 @@ mut:
 	tail &Node = unsafe { nil }
 }
 
-pub fn build_node_tree(fragment []Token) !Program {
+fn build_node_tree(fragment []Token) !Program {
 	if fragment.len == 0 {
 		return Program{}
 	}
