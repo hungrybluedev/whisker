@@ -247,17 +247,16 @@ pub const section_test = TestList{
 			template: '"{{*list}}({{.}}){{/list}}"'
 			expected: '"(true)(false)(true)(true)(false)"'
 		},
-		// TODO: Fix this nested iteration case
-		// TestCase{
-		// 	name: 'Implicit Iterator - Array'
-		// 	desc: 'Implicit iterators should allow iterating over nested arrays.'
-		// 	data: DataModel({
-		// 		'list': DataModel([DataModel([DataModel('1'), '2', '3']),
-		// 			DataModel([DataModel('a'), 'b', 'c'])])
-		// 	})
-		// 	template: '"{{*list}}({{*.}}{{.}}{{/.}}){{/list}}"'
-		// 	expected: '"(123)(abc)"'
-		// },
+		TestCase{
+			name: 'Implicit Iterator - Array'
+			desc: 'Implicit iterators should allow iterating over nested arrays.'
+			data: DataModel({
+				'list': DataModel([DataModel([DataModel('1'), '2', '3']),
+					DataModel([DataModel('a'), 'b', 'c'])])
+			})
+			template: '"{{*list}}({{*.}}{{.}}{{/.}}){{/list}}"'
+			expected: '"(123)(abc)"'
+		},
 		TestCase{
 			name: 'Dotted Names'
 			desc: 'Dotted Names should be valid for boolean section tags'

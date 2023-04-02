@@ -234,8 +234,23 @@ pub fn (template Template) run(context DataModel) !string {
 
 				// Copy over the inner contents of the list
 				mut inner_nodes := []&Node{}
+				mut jump_indices := []int{}
 				for n := current.next; !isnil(n) && n != current.jump; n = n.next {
 					inner_nodes << n
+					// Save jump node index
+					if isnil(n.jump) {
+						jump_indices << -1
+					} else {
+						// Find the element being linked
+						mut jump_index := -1
+						for k := current.next; !isnil(k) && k != current.jump; k = k.next {
+							jump_index++
+							if k == n.jump {
+								jump_indices << jump_index
+								break
+							}
+						}
+					}
 				}
 				// Last one is the list close section
 				original_list_closer := inner_nodes.pop()
@@ -269,14 +284,24 @@ pub fn (template Template) run(context DataModel) !string {
 						}
 						jump: list_opener
 					}
+					mut second_copy := []&Node{}
 					join_point.next = list_opener
 					join_point = list_opener
+					// First pass for connecting the copied inner section
+					// through the "next" links
 					for node in inner_nodes {
 						copy := &Node{
 							...node
 						}
+						second_copy << copy
 						join_point.next = copy
 						join_point = copy
+					}
+					// Second pass for connecting the jump links
+					for inner_index, jump_index in jump_indices {
+						if jump_index >= 0 {
+							second_copy[inner_index].jump = second_copy[jump_index]
+						}
 					}
 					join_point.next = list_closer
 					join_point = list_closer
