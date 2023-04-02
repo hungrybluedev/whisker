@@ -44,9 +44,9 @@ fn generate_json_files() ! {
 }
 
 fn test_exported_files() ! {
-	if !os.exists('spec/gen') {
-		generate_json_files()!
-	}
+	os.rmdir('spec/gen') or {}
+	generate_json_files()!
+
 	for suite in spec_test_suites {
 		for test in suite.tests {
 			json_content := os.read_file('spec/gen/${suite.name}/${test.name}.wskr.json')!
