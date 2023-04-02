@@ -32,12 +32,12 @@ Partials are external templates that can be plugged into the current template.
 		// TestCase{
 		// 	name: 'Recursion'
 		// 	desc: 'The greater-than operator should properly recurse.'
-		// 	data: whisker.DataModel({
-		// 		'content': whisker.DataModel('X')
-		// 		'nodes':   whisker.DataModel([
-		// 			whisker.DataModel({
-		// 				'content': whisker.DataModel('Y')
-		// 				'nodes':   []whisker.DataModel{}
+		// 	data: DataModel({
+		// 		'content': DataModel('X')
+		// 		'nodes':   DataModel([
+		// 			DataModel({
+		// 				'content': DataModel('Y')
+		// 				'nodes':   []DataModel{}
 		// 			}),
 		// 		])
 		// 	})
