@@ -8,6 +8,7 @@ import datamodel { DataModel }
 struct Section {
 	name string
 }
+
 [heap]
 struct Node {
 	token Token
