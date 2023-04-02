@@ -15,8 +15,8 @@ mut:
 }
 
 pub fn (node Node) str() string {
-	next := if unsafe { node.next == nil } { '' } else { node.next.str() }
-	skip := if unsafe { node.jump == nil } { '' } else { node.jump.str() }
+	next := if isnil(node.next) { '' } else { node.next.str() }
+	skip := if isnil(node.jump) { '' } else { node.jump.str() }
 	return '{${node.token}}\n${next}\n${skip}'.trim_space()
 }
 
@@ -59,7 +59,7 @@ pub fn build_node_tree(fragment []Token) !Program {
 
 fn add_jumps(head &Node) ! {
 	mut current := unsafe { head }
-	for unsafe { current != nil } {
+	for !isnil(current) {
 		match current.token.token_type {
 			.positive_section, .negative_section, .map_section, .list_section {
 				// Found the beginning of a skippable section
@@ -69,8 +69,8 @@ fn add_jumps(head &Node) ! {
 				mut depth := 0
 
 				mut section := current.next
-				for unsafe { section != nil } && !(depth == 0
-					&& section.token.token_type == .close_section && section.token.content == name) {
+				for !isnil(section) && !(depth == 0 && section.token.token_type == .close_section
+					&& section.token.content == name) {
 					// Check for nested sections
 					if section.token.content == name {
 						match section.token.token_type {
@@ -88,7 +88,7 @@ fn add_jumps(head &Node) ! {
 					section = section.next
 				}
 
-				if unsafe { section == nil } {
+				if isnil(section) {
 					return error('Missing a closing section for: ${name}')
 				}
 
@@ -105,7 +105,7 @@ fn add_jumps(head &Node) ! {
 pub fn (template Template) run(context DataModel) !string {
 	mut main_program := build_node_tree(template.tokens)!
 
-	if unsafe { main_program.head == nil } {
+	if isnil(main_program.head) {
 		return ''
 	}
 
@@ -121,7 +121,7 @@ pub fn (template Template) run(context DataModel) !string {
 	mut output := strings.new_builder(256)
 	mut sections := datatypes.Stack[Section]{}
 	mut current := main_program.head
-	for unsafe { current != nil } {
+	for !isnil(current) {
 		match current.token.token_type {
 			.normal {
 				output.write_string(current.token.content)
@@ -234,10 +234,8 @@ pub fn (template Template) run(context DataModel) !string {
 
 				// Copy over the inner contents of the list
 				mut inner_nodes := []&Node{}
-				for n := current.next; unsafe { n != nil } && n != current.jump; n = n.next {
-					inner_nodes << &Node{
-						...n
-					}
+				for n := current.next; !isnil(n) && n != current.jump; n = n.next {
+					inner_nodes << n
 				}
 				// Last one is the list close section
 				original_list_closer := inner_nodes.pop()
