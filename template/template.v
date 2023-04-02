@@ -31,10 +31,6 @@ pub fn from_strings(config TemplateConfig) !Template {
 	}
 }
 
-struct Section {
-	name string
-}
-
 pub fn load_file(config TemplateConfig) !Template {
 	input := os.read_file(config.input)!
 
