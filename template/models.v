@@ -1,7 +1,6 @@
 module template
 
 import os
-import datamodel { DataModel }
 
 pub struct Template {
 pub:
@@ -33,8 +32,7 @@ pub fn from_strings(config TemplateConfig) !Template {
 }
 
 struct Section {
-	name     string
-	contexts []DataModel
+	name string
 }
 
 pub fn load_file(config TemplateConfig) !Template {

@@ -241,13 +241,9 @@ pub fn (template Template) run(context DataModel) !string {
 				sections.push(Section{
 					name: current.token.content
 				})
-				parts := current.token.content.split('#')
-				if parts.len != 2 {
-					return error('Invalid expanded section name: ${current.token.content}')
-				}
 
-				list_name := parts[0]
-				list_index := parts[1].int()
+				list_name := current.token.content
+				list_index := current.token.index
 
 				query_value := data_stack.query(list_name)!
 				if query_value !is []DataModel {
@@ -276,11 +272,12 @@ pub fn (template Template) run(context DataModel) !string {
 			}
 			.list_section {
 				// Iterate over all list keys and replace with expanded map sections
-
 				query_value := data_stack.query(current.token.content)!
+
 				if query_value !is []DataModel {
 					return error('Expected a list for "${current.token.content}"')
 				}
+
 				work_list := query_value as []DataModel
 				if work_list.len == 0 {
 					// Nothing to do, skip over
@@ -289,7 +286,6 @@ pub fn (template Template) run(context DataModel) !string {
 				}
 
 				inner_program := clone_linked_list(current.next, current.jump)
-
 				if inner_program.len == 0 {
 					// Nothing to do, skip over
 					current = current.jump.next
@@ -299,11 +295,12 @@ pub fn (template Template) run(context DataModel) !string {
 				mut join_point := current
 				for index, _ in work_list {
 					// New context for expanded list
-					section_name := '${current.token.content}#${index}'
+					section_name := current.token.content
 					mut list_opener := &Node{
 						token: Token{
 							content: section_name
 							token_type: .expanded_list_section
+							index: index
 						}
 					}
 					mut list_closer := &Node{

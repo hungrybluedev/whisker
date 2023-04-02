@@ -40,6 +40,7 @@ enum TokenType {
 struct Token {
 	content    string
 	token_type TokenType
+	index      int = -1
 }
 
 fn (token Token) str() string {
