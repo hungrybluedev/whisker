@@ -298,6 +298,7 @@ fn extract_tokens(input string) ![]Token {
 				}
 			}
 			`{` {
+				// If we're using triple braces, we should remember to skip the last brace
 				offset := tag_content.len - if index < input.len && input[index] == `}` {
 					index++
 					0
