@@ -93,12 +93,68 @@ fn add_jumps(head &Node) ! {
 				}
 
 				// We now have the corresponding closing section
-				current.jump = section.next
+				current.jump = section
 				section.jump = current
 			}
 			else {}
 		}
 		current = current.next
+	}
+}
+
+fn (program Program) clone() Program {
+	return clone_linked_list(program.head, program.tail.next)
+}
+
+fn clone_linked_list(head &Node, sentinel &Node) Program {
+	mut original_nodes := []&Node{}
+
+	// Store the original nodes in an indexable array
+	if isnil(sentinel) {
+		// Go until the end of the list
+		for current := unsafe { head }; !isnil(current); current = current.next {
+			original_nodes << current
+		}
+	} else {
+		// Go until the sentinel
+		for current := unsafe { head }; current != sentinel; current = current.next {
+			original_nodes << current
+		}
+	}
+	mut jump_points := []int{}
+	mut copied_nodes := []&Node{}
+	// Find the jump points and create copies
+	for original in original_nodes {
+		copy := &Node{
+			...original
+		}
+		copied_nodes << copy
+		if isnil(original.jump) {
+			jump_points << -1
+		} else {
+			// Find the node that is being linked to
+			for jump_index, current in original_nodes {
+				if !isnil(original.jump) && current == original.jump {
+					jump_points << jump_index
+					break
+				}
+			}
+		}
+	}
+	// Connect the copied nodes together
+	for i := 1; i < copied_nodes.len; i++ {
+		copied_nodes[i - 1].next = copied_nodes[i]
+	}
+	for i, jump_point in jump_points {
+		if jump_point >= 0 {
+			copied_nodes[i].jump = copied_nodes[jump_point]
+		}
+	}
+
+	return Program{
+		len: copied_nodes.len
+		head: copied_nodes.first()
+		tail: copied_nodes.last()
 	}
 }
 
@@ -156,7 +212,7 @@ pub fn (template Template) run(context DataModel) !string {
 				}
 				switch := query_value as bool
 				if !switch {
-					current = current.jump
+					current = current.jump.next
 				} else {
 					sections.push(Section{
 						name: current.token.content
@@ -172,7 +228,7 @@ pub fn (template Template) run(context DataModel) !string {
 				}
 				switch := query_value as bool
 				if switch {
-					current = current.jump
+					current = current.jump.next
 				} else {
 					sections.push(Section{
 						name: current.token.content
@@ -203,7 +259,7 @@ pub fn (template Template) run(context DataModel) !string {
 					return error('Invalid list index ${list_index} for "${list_name}"')
 				}
 
-				data_stack.push(work_list[list_index].clone())
+				data_stack.push(work_list[list_index])
 				current = current.next
 			}
 			.map_section {
@@ -228,45 +284,18 @@ pub fn (template Template) run(context DataModel) !string {
 				work_list := query_value as []DataModel
 				if work_list.len == 0 {
 					// Nothing to do, skip over
-					current = current.jump
+					current = current.jump.next
 					continue
 				}
 
-				// Copy over the inner contents of the list
-				mut inner_nodes := []&Node{}
-				mut jump_indices := []int{}
-				for n := current.next; !isnil(n) && n != current.jump; n = n.next {
-					inner_nodes << n
-					// Save jump node index
-					if isnil(n.jump) {
-						jump_indices << -1
-					} else {
-						// Find the element being linked
-						mut jump_index := -1
-						for k := current.next; !isnil(k) && k != current.jump; k = k.next {
-							jump_index++
-							if k == n.jump {
-								jump_indices << jump_index
-								break
-							}
-						}
-					}
-				}
-				// Last one is the list close section
-				original_list_closer := inner_nodes.pop()
+				inner_program := clone_linked_list(current.next, current.jump)
 
-				// If the inner content of the list section is empty, we skip
-				if inner_nodes.len == 0 {
+				if inner_program.len == 0 {
 					// Nothing to do, skip over
-					current = current.jump
+					current = current.jump.next
 					continue
 				}
 
-				sections.push(Section{
-					name: current.token.content
-				})
-
-				// Now we copy the inner-nodes and modify the program
 				mut join_point := current
 				for index, _ in work_list {
 					// New context for expanded list
@@ -282,38 +311,33 @@ pub fn (template Template) run(context DataModel) !string {
 							content: section_name
 							token_type: .close_section
 						}
-						jump: list_opener
 					}
-					mut second_copy := []&Node{}
+					mut current_program := inner_program.clone()
+
+					// Attach this new expanded section to the joining point
 					join_point.next = list_opener
-					join_point = list_opener
-					// First pass for connecting the copied inner section
-					// through the "next" links
-					for node in inner_nodes {
-						copy := &Node{
-							...node
-						}
-						second_copy << copy
-						join_point.next = copy
-						join_point = copy
-					}
-					// Second pass for connecting the jump links
-					for inner_index, jump_index in jump_indices {
-						if jump_index >= 0 {
-							second_copy[inner_index].jump = second_copy[jump_index]
-						}
-					}
-					join_point.next = list_closer
+
+					// Attach the inner copy to the expanded section
+					list_opener.next = current_program.head
+					current_program.tail.next = list_closer
+
+					// Connect the list and closer sections by jump points
+					list_closer.jump = list_opener
+					list_opener.jump = list_closer
+
+					// Now attach the remaining after the new closer
 					join_point = list_closer
 				}
 
-				join_point.next = original_list_closer
+				join_point.next = current.jump
 
+				sections.push(Section{
+					name: current.token.content
+				})
 				current = current.next
 			}
 			.close_section {
 				if sections.is_empty() {
-					dump(current)
 					return error('Found a stray closing tag.')
 				}
 				last_section := sections.pop()!
@@ -334,7 +358,7 @@ pub fn (template Template) run(context DataModel) !string {
 				}
 				next := current.next
 
-				mut replacement := partial_programs[name]
+				mut replacement := partial_programs[name].clone()
 				replacement.tail.next = next
 
 				current = replacement.head
