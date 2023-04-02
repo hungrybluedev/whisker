@@ -132,7 +132,7 @@ v cmd/whisker -o cmd/bin/whisker
 cmd/bin/whisker --help
 ```
 
-Check [whisker_cli_test.v](cmd/whisker_cli_test.v) for a concrete
+Check [whisker_cli_test.v](cmd/whisker/whisker_cli_test.v) for a concrete
 demonstration.
 
 ## Syntax
