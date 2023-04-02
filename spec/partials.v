@@ -29,24 +29,24 @@ Partials are external templates that can be plugged into the current template.
 			}
 			expected: '"*content*"'
 		},
-		// TestCase{
-		// 	name: 'Recursion'
-		// 	desc: 'The greater-than operator should properly recurse.'
-		// 	data: DataModel({
-		// 		'content': DataModel('X')
-		// 		'nodes':   DataModel([
-		// 			DataModel({
-		// 				'content': DataModel('Y')
-		// 				'nodes':   []DataModel{}
-		// 			}),
-		// 		])
-		// 	})
-		// 	template: '{{>node}}'
-		// 	partials: {
-		// 		'node': '{{content}}<{{*nodes}}{{>node}}{{/nodes}}>'
-		// 	}
-		// 	expected: 'X<Y<>>'
-		// },
+		TestCase{
+			name: 'Recursion'
+			desc: 'The greater-than operator should properly recurse.'
+			data: DataModel({
+				'content': DataModel('X')
+				'nodes':   DataModel([
+					DataModel({
+						'content': DataModel('Y')
+						'nodes':   []DataModel{}
+					}),
+				])
+			})
+			template: '{{>node}}'
+			partials: {
+				'node': '{{content}}<{{*nodes}}{{>node}}{{/nodes}}>'
+			}
+			expected: 'X<Y<>>'
+		},
 		TestCase{
 			name: 'Surrounding Whitespace'
 			desc: 'The greater-than operator should not alter surrounding whitespace.'
