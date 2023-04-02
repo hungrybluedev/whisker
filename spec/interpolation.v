@@ -292,5 +292,19 @@ These characters should not be HTML escaped: & " < >
 			template: '|{{& string }}|'
 			expected: '|---|'
 		},
+		TestCase{
+			name: 'Inner Brace Raw Tag With Delimiter Swap'
+			desc: 'If the delimiter has been swapped, respect raw tag with curly braces.'
+			data: DataModel('<OK>')
+			template: '{{=[ ]=}}[.][{.}]'
+			expected: '&lt;OK&gt;<OK>'
+		},
+		TestCase{
+			name: 'Delimiter Swap With Ampersand'
+			desc: 'Ampersand should still work after delimiter swap.'
+			data: DataModel('<OK>')
+			template: '{{=[ ]=}}[.][&.]'
+			expected: '&lt;OK&gt;<OK>'
+		},
 	]
 }
