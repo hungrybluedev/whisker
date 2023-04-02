@@ -211,13 +211,13 @@ fn extract_tokens(input string) ![]Token {
 			start_delim = new_start.str()
 			end_delim = new_end.str()
 
-			// Add a dummy comment tag so that it can be removed if it standalone
+			// Add a dummy comment tag so that it can be removed if it is standalone
 			tokens << Token{
 				content: ''
 				token_type: .comment
 			}
 
-			// Ready to normal character parsing
+			// Move on to parsing rest of the input
 			continue
 		}
 
@@ -254,10 +254,6 @@ fn extract_tokens(input string) ![]Token {
 		// We've got the closing tag
 		index += end_delim.len
 		tag_content := buffer.str().trim_space()
-		// if tag_content.len < 1 {
-		// 	return error('Invalid tag content: "${tag_content}"')
-		// }
-
 		tokens << match tag_content[0] {
 			`!` {
 				Token{
@@ -302,11 +298,15 @@ fn extract_tokens(input string) ![]Token {
 				}
 			}
 			`{` {
-				// move the index one more, for the closing }
-				index++
+				offset := tag_content.len - if index < input.len && input[index] == `}` {
+					index++
+					0
+				} else {
+					1
+				}
 				Token{
 					token_type: .raw_tag
-					content: tag_content[1..].trim_space()
+					content: tag_content[1..offset].trim_space()
 				}
 			}
 			`&` {
