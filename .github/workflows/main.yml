@@ -2,6 +2,9 @@ name: CI
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
     branches: [ main ]
   pull_request:
     branches: [ main ]
