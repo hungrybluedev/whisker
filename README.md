@@ -16,15 +16,15 @@ for [V](https://vlang.io/) with a simple syntax.
 
 ## Features
 
-1. **Logic-less templates**: different but expressive and powerful.
-2. **Four Data Types**: booleans, strings, lists, and maps.
-3. **Simple Data Model**: Template data be constructed in V source code or
-   imported
-   and exported using JSON.
-4. **Partials**: External, partial templates can be plugged into the primary
+1. **Logic-less**: Different but expressive and powerful.
+2. **Four Data Types**: Booleans, Strings, Lists, and Maps.
+3. **Composable**: Supports nested iteration and partial recursion.
+4. **Simple Data Model**: Template data be constructed in V source code or
+   imported and exported using JSON.
+5. **Partials**: External, partial templates can be plugged into the primary
    template.
-5. **Safe by Default**: Tag contents are escaped by default.
-6. **Customisable**: The delimiters can be changed from the default `{{...}}`.
+6. **Safe by Default**: Tag contents are HTML escaped by default.
+7. **Customisable**: The delimiters can be changed from the default `{{...}}`.
 
 ## Motivation
 
@@ -110,6 +110,8 @@ fn main() {
 
 It is not necessary, but it is recommended to use filenames that
 contain `*.wskr.*` somewhere in the file name.
+Check [json_test.v](spec/json_test.v) and [html_test.v](spec/html_test.v) for
+examples with template files.
 
 ## The CLI
 
@@ -200,7 +202,7 @@ fn main() {
 module main
 
 fn main() {
-	println('Have a nice day!')
+    println('Have a nice day!')
 }
 ```
 
