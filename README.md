@@ -34,6 +34,10 @@ The following blog posts provide more context:
    _whisker_ - easier way to do templates in V](https://hungrybluedev.tech/whisker-easier-way-to-do-templates-in-v/):
    We take a look at current template engines available in V and announce a new
    template engine.
+2. [Writing whisker’s tokeniser using the Theory of Computation](https://hungrybluedev.tech/writing-whiskers-tokeniser-using-the-theory-of-computation/):
+   We show how we use fundamental CS principles to implement an FSM-based
+   tokeniser for whisker.
+
 
 ## Prerequisites
 
