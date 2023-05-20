@@ -163,7 +163,7 @@ fn clone_linked_list(head &Node, sentinel &Node) Program {
 }
 
 pub fn (template Template) run(context DataModel) !string {
-	mut main_program := build_node_tree(template.tokens)!
+	mut main_program := template.program.clone()
 
 	if isnil(main_program.head) {
 		return ''
@@ -171,8 +171,8 @@ pub fn (template Template) run(context DataModel) !string {
 
 	mut partial_programs := map[string]Program{}
 
-	for partial, tokens in template.partials {
-		partial_programs[partial] = build_node_tree(tokens)!
+	for partial in template.partials {
+		partial_programs[partial] = template.partial_programs[partial].clone()
 	}
 
 	mut data_stack := DataStack{}

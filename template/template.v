@@ -4,8 +4,9 @@ import os
 
 pub struct Template {
 pub:
-	tokens   []Token
-	partials map[string][]Token
+	program          Program
+	partials         []string
+	partial_programs map[string]Program
 }
 
 [params]
@@ -25,9 +26,18 @@ pub fn from_strings(config TemplateConfig) !Template {
 		tokenized_partials[label] = tokenize(partial)!
 	}
 
+	main_tokens := tokenize(config.input)!
+	main_program := build_node_tree(main_tokens)!
+	mut partial_programs := map[string]Program{}
+
+	for partial, tokens in tokenized_partials {
+		partial_programs[partial] = build_node_tree(tokens)!
+	}
+
 	return Template{
-		tokens: tokenize(config.input)!
-		partials: tokenized_partials
+		program: main_program
+		partials: tokenized_partials.keys()
+		partial_programs: partial_programs
 	}
 }
 
