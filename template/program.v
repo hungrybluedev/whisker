@@ -169,12 +169,6 @@ pub fn (template Template) run(context DataModel) !string {
 		return ''
 	}
 
-	mut partial_programs := map[string]Program{}
-
-	for partial in template.partials {
-		partial_programs[partial] = template.partial_programs[partial].clone()
-	}
-
 	mut data_stack := DataStack{}
 	data_stack.push(context)
 
@@ -354,12 +348,12 @@ pub fn (template Template) run(context DataModel) !string {
 			}
 			.partial_section {
 				name := current.token.content.trim_space()
-				if name !in partial_programs {
+				if name !in template.partial_programs {
 					return error('No partial found named "${name}"')
 				}
 				next := current.next
 
-				mut replacement := partial_programs[name].clone()
+				mut replacement := template.partial_programs[name].clone()
 				replacement.tail.next = next
 
 				current = replacement.head
