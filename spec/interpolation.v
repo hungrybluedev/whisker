@@ -42,7 +42,7 @@ Hello, world!
 These characters should be HTML escaped: {{forbidden}}
 '
 			expected: '
-These characters should be HTML escaped: &amp; &quot; &lt; &gt;
+These characters should be HTML escaped: &amp; &#34; &lt; &gt;
 '
 		},
 		TestCase{
@@ -186,7 +186,7 @@ Hello, world!
 These characters should be HTML escaped: {{.}}
 '
 			expected: '
-These characters should be HTML escaped: &amp; &quot; &lt; &gt;
+These characters should be HTML escaped: &amp; &#34; &lt; &gt;
 '
 		},
 		TestCase{
