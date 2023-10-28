@@ -162,8 +162,8 @@ fn clone_linked_list(head &Node, sentinel &Node) Program {
 	}
 }
 
-pub fn (template Template) run(context DataModel) !string {
-	mut main_program := template.program.clone()
+pub fn (t Template) run(context DataModel) !string {
+	mut main_program := t.program.clone()
 
 	if isnil(main_program.head) {
 		return ''
@@ -205,34 +205,62 @@ pub fn (template Template) run(context DataModel) !string {
 			}
 			.positive_section {
 				query_value := data_stack.query(current.token.content)!
-				if query_value !is bool {
-					return error('Expected a bool for "${current.token.content}"')
-				}
-				switch := query_value as bool
-				if !switch {
-					current = current.jump.next
-				} else {
-					sections.push(Section{
-						name: current.token.content
-					})
-					data_stack.push(true)
-					current = current.next
+				match query_value {
+					bool {
+						if !query_value {
+							current = current.jump.next
+						} else {
+							sections.push(Section{
+								name: current.token.content
+							})
+							data_stack.push(true)
+							current = current.next
+						}
+					}
+					[]DataModel, map[string]DataModel {
+						if query_value.len == 0 {
+							current = current.jump.next
+						} else {
+							sections.push(Section{
+								name: current.token.content
+							})
+							data_stack.push(query_value)
+							current = current.next
+						}
+					}
+					else {
+						return error('Expected a bool, list, or map for "${current.token.content}"')
+					}
 				}
 			}
 			.negative_section {
 				query_value := data_stack.query(current.token.content)!
-				if query_value !is bool {
-					return error('Expected a bool for "${current.token.content}"')
-				}
-				switch := query_value as bool
-				if switch {
-					current = current.jump.next
-				} else {
-					sections.push(Section{
-						name: current.token.content
-					})
-					data_stack.push(false)
-					current = current.next
+				match query_value {
+					bool {
+						if query_value {
+							current = current.jump.next
+						} else {
+							sections.push(Section{
+								name: current.token.content
+							})
+							data_stack.push(false)
+							current = current.next
+						}
+					}
+					[]DataModel, map[string]DataModel {
+						if query_value.len > 0 {
+							current = current.jump.next
+						} else {
+							sections.push(Section{
+								name: current.token.content
+							})
+							data_stack.push(query_value)
+							current = current.next
+						}
+					}
+					else {
+						return error('Expected a bool, list, or map for "${current.token.content}"')
+					}
 				}
 			}
 			.expanded_list_section {
@@ -348,12 +376,12 @@ pub fn (template Template) run(context DataModel) !string {
 			}
 			.partial_section {
 				name := current.token.content.trim_space()
-				if name !in template.partial_programs {
+				if name !in t.partial_programs {
 					return error('No partial found named "${name}"')
 				}
 				next := current.next
 
-				mut replacement := template.partial_programs[name].clone()
+				mut replacement := t.partial_programs[name].clone()
 				replacement.tail.next = next
 
 				current = replacement.head

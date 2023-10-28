@@ -359,5 +359,43 @@ pub const section_test = TestList{
 			template: '|{{+ boolean }}={{/ boolean }}|'
 			expected: '|=|'
 		},
+		TestCase{
+			name: 'Empty List As Boolean Section'
+			desc: 'Using empty lists in boolean sections should behave as if the boolean value was false.'
+			data: DataModel({
+				'list': DataModel([]DataModel{})
+			})
+			template: '{{+list}}Should not render.{{/list}}{{-list}}Should render.{{/list}}'
+			expected: 'Should render.'
+		},
+		TestCase{
+			name: 'Non-empty List As Boolean Section'
+			desc: 'Using non-empty lists in boolean sections should behave as if the boolean value was true.'
+			data: DataModel({
+				'list': DataModel([DataModel('hi')])
+			})
+			template: '{{+list}}Should render.{{/list}}{{-list}}Should not render.{{/list}}'
+			expected: 'Should render.'
+		},
+		TestCase{
+			name: 'Map As Boolean Section'
+			desc: 'Using maps in boolean sections should behave as if the boolean value was true.'
+			data: DataModel({
+				'map': DataModel({
+					'foo': DataModel('bar')
+				})
+			})
+			template: '{{+map}}Should render.{{/map}}{{-map}}Should not render.{{/map}}'
+			expected: 'Should render.'
+		},
+		TestCase{
+			name: 'Empty Map As Boolean Section'
+			desc: 'Using empty maps in boolean sections should behave as if the boolean value was false.'
+			data: DataModel({
+				'map': DataModel(map[string]DataModel{})
+			})
+			template: '{{+map}}Should not render.{{/map}}{{-map}}Should render.{{/map}}'
+			expected: 'Should render.'
+		},
 	]
 }
