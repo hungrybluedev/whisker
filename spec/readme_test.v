@@ -109,6 +109,53 @@ fn test_boolean_positive_negative_sections() {
 	}
 }
 
+fn test_list_positive_negative_sections() {
+	input := '
+	{{+vacation}}
+	<h1>Currenty on vacation</h1>
+	<ul>
+	{{/vacation}}
+	{{*vacation}}
+	<li>{{.}}</li>
+	{{/vacation}}
+	{{+vacation}}
+	</ul>
+	{{/vacation}}
+	{{-vacation}}
+	<p>Nobody is on vacation currently</p>
+	{{/vacation}}
+	'.trim_indent()
+	data_list := [
+		datamodel.from_json('{
+		  "vacation": []
+		}')!,
+		datamodel.from_json('{
+		  "vacation": ["Homer", "Marge"]
+		}')!,
+	]
+
+	outputs := [
+		'
+		<p>Nobody is on vacation currently</p>
+
+		'.trim_indent(),
+		'
+		<h1>Currenty on vacation</h1>
+		<ul>
+		<li>Homer</li>
+		<li>Marge</li>
+		</ul>
+
+		'.trim_indent(),
+	]
+
+	section_template := template.from_strings(input: input)!
+
+	for index, data in data_list {
+		assert section_template.run(data)! == outputs[index]
+	}
+}
+
 fn test_maps_lists_partials() {
 	input := '
 	<ol>

@@ -284,22 +284,26 @@ Positive and negative sections also apply to lists and maps. An empty list or ma
 
 ```html
 
-{{+on_vacation}}
+{{+vacation}}
 <h1>Currenty on vacation</h1>
 <ul>
-{{*on_vacation}}
-    <li>{{.}}</li>
-{{/on_vacation}}
+{{/vacation}}
+{{*vacation}}
+<li>{{.}}</li>
+{{/vacation}}
+{{+vacation}}
 </ul>
-{{/on_vacation}}
-{{-on_vacation}}<p>Nobody is on vacation currently</p>{{/on_vacation}}
+{{/vacation}}
+{{-vacation}}
+<p>Nobody is on vacation currently</p>
+{{/vacation}}
 ```
 
 #### Data 1
 
 ```json
 {
-  "on_vacation": []
+  "vacation": []
 }
 ```
 
@@ -313,7 +317,7 @@ Positive and negative sections also apply to lists and maps. An empty list or ma
 
 ```json
 {
-  "on_vacation": ["Homer", "Marge"]
+  "vacation": ["Homer", "Marge"]
 }
 ```
 
@@ -322,8 +326,8 @@ Positive and negative sections also apply to lists and maps. An empty list or ma
 ```html
 <h1>Currenty on vacation</h1>
 <ul>
-    <li>Homer</li>
-    <li>Marge</li>
+<li>Homer</li>
+<li>Marge</li>
 </ul>
 ```
 
