@@ -109,6 +109,90 @@ fn test_boolean_positive_negative_sections() {
 	}
 }
 
+fn test_list_positive_negative_sections() {
+	input := '
+	{{+vacation}}
+	<h1>Currenty on vacation</h1>
+	<ul>
+	{{*.}}
+	<li>{{.}}</li>
+	{{/.}}
+	</ul>
+	{{/vacation}}
+	{{-vacation}}
+	<p>Nobody is on vacation currently</p>
+	{{/vacation}}
+	'.trim_indent()
+	data_list := [
+		datamodel.from_json('{
+		  "vacation": []
+		}')!,
+		datamodel.from_json('{
+		  "vacation": ["Homer", "Marge"]
+		}')!,
+	]
+
+	outputs := [
+		'
+		<p>Nobody is on vacation currently</p>
+
+		'.trim_indent(),
+		'
+		<h1>Currenty on vacation</h1>
+		<ul>
+		<li>Homer</li>
+		<li>Marge</li>
+		</ul>
+
+		'.trim_indent(),
+	]
+
+	section_template := template.from_strings(input: input)!
+
+	for index, data in data_list {
+		assert section_template.run(data)! == outputs[index]
+	}
+}
+
+fn test_map_positive_negative_sections() {
+	input := '
+	{{+user}}
+	<p>Welcome {{last_name}}, {{first_name}}</h1>
+	{{/user}}
+	{{-user}}
+	<p>Create account?</p>
+	{{/user}}
+	'.trim_indent()
+	data_list := [
+		datamodel.from_json('{
+			"user" : {}
+		}')!,
+		datamodel.from_json('{
+		"user" : {
+		  	"last_name": "Simpson", 
+		  	"first_name": "Homer"
+		}
+		}')!,
+	]
+
+	outputs := [
+		'
+		<p>Create account?</p>
+
+		'.trim_indent(),
+		'
+      <p>Welcome Simpson, Homer</h1>
+
+		'.trim_indent(),
+	]
+
+	section_template := template.from_strings(input: input)!
+
+	for index, data in data_list {
+		assert section_template.run(data)! == outputs[index]
+	}
+}
+
 fn test_maps_lists_partials() {
 	input := '
 	<ol>

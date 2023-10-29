@@ -277,6 +277,104 @@ fn main() {
 </nav>
 ```
 
+Positive and negative sections also apply to lists and maps. An empty list or map means a negative section and a non-empty one represents a positive section.
+
+List:
+
+#### Input
+
+```html
+
+{{+vacation}}
+<h1>Currenty on vacation</h1>
+<ul>
+{{*.}}
+<li>{{.}}</li>
+{{/.}}
+</ul>
+{{/vacation}}
+{{-vacation}}
+<p>Nobody is on vacation currently</p>
+{{/vacation}}
+```
+
+#### Data 1
+
+```json
+{
+  "vacation": []
+}
+```
+
+#### Output 1
+
+```html
+<p>Nobody is on vacation currently</p>
+```
+
+#### Data 2
+
+```json
+{
+  "vacation": ["Homer", "Marge"]
+}
+```
+
+#### Output 2
+
+```html
+<h1>Currenty on vacation</h1>
+<ul>
+<li>Homer</li>
+<li>Marge</li>
+</ul>
+```
+
+Map:
+
+#### Input
+
+```html
+
+{{+user}}
+<p>Welcome {{last_name}}, {{first_name}}</h1>
+{{/user}}
+{{-user}}
+<p>Create account?</p>
+{{/user}}
+```
+
+#### Data 1
+
+```json
+{
+    "user" : {}
+}
+```
+
+#### Output 1
+
+```html
+<p>Create account?</p>
+```
+
+#### Data 2
+
+```json
+{
+    "user" : {
+        "last_name": "Simpson", 
+        "first_name": "Homer"
+    }
+}
+```
+
+#### Output 2
+
+```html
+<p>Welcome Simpson, Homer</h1>
+```
+
 ### Maps, Lists, and Partials
 
 #### Input
