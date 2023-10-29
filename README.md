@@ -279,6 +279,7 @@ fn main() {
 
 Positive and negative sections also apply to lists and maps. An empty list or map means a negative section and a non-empty one represents a positive section.
 
+List:
 
 #### Input
 
@@ -287,11 +288,9 @@ Positive and negative sections also apply to lists and maps. An empty list or ma
 {{+vacation}}
 <h1>Currenty on vacation</h1>
 <ul>
-{{/vacation}}
-{{*vacation}}
+{{*.}}
 <li>{{.}}</li>
-{{/vacation}}
-{{+vacation}}
+{{/.}}
 </ul>
 {{/vacation}}
 {{-vacation}}
@@ -329,6 +328,51 @@ Positive and negative sections also apply to lists and maps. An empty list or ma
 <li>Homer</li>
 <li>Marge</li>
 </ul>
+```
+
+Map:
+
+#### Input
+
+```html
+
+{{+user}}
+<p>Welcome {{last_name}}, {{first_name}}</h1>
+{{/user}}
+{{-user}}
+<p>Create account?</p>
+{{/user}}
+```
+
+#### Data 1
+
+```json
+{
+    "user" : {}
+}
+```
+
+#### Output 1
+
+```html
+<p>Create account?</p>
+```
+
+#### Data 2
+
+```json
+{
+    "user" : {
+        "last_name": "Simpson", 
+        "first_name": "Homer"
+    }
+}
+```
+
+#### Output 2
+
+```html
+<p>Welcome Simpson, Homer</h1>
 ```
 
 ### Maps, Lists, and Partials
