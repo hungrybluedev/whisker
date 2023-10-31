@@ -102,8 +102,13 @@ This is a copy-paste-able example to get started immediately:
 ```v
 module main
 
+// Imports if you install from GitHub:
 import whisker.datamodel
 import whisker.template
+
+// Imports if you install from VPM:
+import hungrybluedev.whisker.template
+import hungrybluedev.whisker.datamodel
 
 fn main() {
 	simple_template := template.from_strings(input: 'Hello, {{name}}!')!
