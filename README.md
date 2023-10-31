@@ -50,7 +50,19 @@ library.
 
 ## Installation
 
-Run the following to install _whisker_ from GitHub using V's package manager:
+### From VPM
+
+```
+v install hungrybluedev.whisker
+```
+
+This should install the package as the `hungrybluedev.whisker` module.
+
+To use it, use `impport hungrybluedev.whisker` and proceed as normal.
+
+### From GitHub
+
+Run the following to install _whisker_ from **GitHub** using V's package manager:
 
 ```
 v install --git https://github.com/hungrybluedev/whisker
@@ -277,9 +289,9 @@ fn main() {
 </nav>
 ```
 
-Positive and negative sections also apply to lists and maps. An empty list or map means a negative section and a non-empty one represents a positive section.
+> Positive and negative sections also apply to lists and maps. An empty list or map means a negative section and a non-empty one represents a positive section.
 
-List:
+**List**:
 
 #### Input
 
@@ -330,7 +342,7 @@ List:
 </ul>
 ```
 
-Map:
+**Map**:
 
 #### Input
 
