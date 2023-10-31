@@ -1,6 +1,6 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-<img src="./docs/img/whisker logo.svg" width="300" alt="whisker logo"/>
+<img src="https://raw.githubusercontent.com/hungrybluedev/whisker/main/docs/img/whisker%20logo.svg" width="300" alt="whisker logo"/>
 
 [vlang.io](https://vlang.io) | [hungrybluedev](https://hungrybluedev.in/)
 
