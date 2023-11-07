@@ -65,7 +65,7 @@ fn add_jumps(head &Node) ! {
 	mut current := unsafe { head }
 	for !isnil(current) {
 		match current.token.token_type {
-			.positive_section, .negative_section, .map_section, .list_section {
+			.positive_section, .negative_section, .map_section, .iteration_section {
 				// Found the beginning of a skippable section
 				// We save the name of the section and look for the closing section
 				name := current.token.content
@@ -263,25 +263,39 @@ pub fn (t Template) run(context DataModel) !string {
 					}
 				}
 			}
-			.expanded_list_section {
+			.expanded_iteration_section {
 				sections.push(Section{
 					name: current.token.content
 				})
 
-				list_name := current.token.content
-				list_index := current.token.index
+				iterable_name := current.token.content
 
-				query_value := data_stack.query(list_name)!
-				if query_value !is []DataModel {
-					return error('Expected a list for "${list_name}"')
+				query_value := data_stack.query(iterable_name)!
+				match query_value {
+					[]DataModel {
+						list_index := current.token.index
+						if list_index < 0 || list_index >= query_value.len {
+							return error('Invalid list index ${list_index} for "${iterable_name}"')
+						}
+						data_stack.push(query_value[list_index])
+					}
+					map[string]DataModel {
+						map_key := current.token.key
+						if map_key !in query_value {
+							return error('Invalid map key "${map_key}" for "${iterable_name}"')
+						}
+						data_stack.push(DataModel({
+							'key':   DataModel(map_key)
+							'value': query_value[map_key] or {
+								return error('Invalid map key "${map_key}" for "${iterable_name}"')
+							}
+						}))
+					}
+					else {
+						return error('Expected a list or map for "${iterable_name}"')
+					}
 				}
-				work_list := query_value as []DataModel
 
-				if list_index < 0 || list_index >= work_list.len {
-					return error('Invalid list index ${list_index} for "${list_name}"')
-				}
-
-				data_stack.push(work_list[list_index])
 				current = current.next
 			}
 			.map_section {
@@ -296,63 +310,105 @@ pub fn (t Template) run(context DataModel) !string {
 				})
 				current = current.next
 			}
-			.list_section {
+			.iteration_section {
 				// Iterate over all list keys and replace with expanded map sections
 				query_value := data_stack.query(current.token.content)!
 
-				if query_value !is []DataModel {
-					return error('Expected a list for "${current.token.content}"')
-				}
-
-				work_list := query_value as []DataModel
-				if work_list.len == 0 {
-					// Nothing to do, skip over
-					current = current.jump.next
-					continue
-				}
-
-				inner_program := clone_linked_list(current.next, current.jump)
-				if inner_program.len == 0 {
-					// Nothing to do, skip over
-					current = current.jump.next
-					continue
-				}
-
-				mut join_point := current
-				for index, _ in work_list {
-					// New context for expanded list
-					section_name := current.token.content
-					mut list_opener := &Node{
-						token: Token{
-							content: section_name
-							token_type: .expanded_list_section
-							index: index
+				match query_value {
+					[]DataModel {
+						if query_value.len == 0 {
+							// Nothing to do, skip over
+							current = current.jump.next
+							continue
 						}
-					}
-					mut list_closer := &Node{
-						token: Token{
-							content: section_name
-							token_type: .close_section
+
+						inner_program := clone_linked_list(current.next, current.jump)
+
+						mut join_point := current
+						for index, _ in query_value {
+							// New context for expanded list
+							section_name := current.token.content
+							mut list_opener := &Node{
+								token: Token{
+									content: section_name
+									token_type: .expanded_iteration_section
+									index: index
+								}
+							}
+							mut list_closer := &Node{
+								token: Token{
+									content: section_name
+									token_type: .close_section
+								}
+							}
+							mut current_program := inner_program.clone()
+
+							// Attach this new expanded section to the joining point
+							join_point.next = list_opener
+
+							// Attach the inner copy to the expanded section
+							list_opener.next = current_program.head
+							current_program.tail.next = list_closer
+
+							// Connect the list and closer sections by jump points
+							list_closer.jump = list_opener
+							list_opener.jump = list_closer
+
+							// Now attach the remaining after the new closer
+							join_point = list_closer
 						}
+
+						join_point.next = current.jump
 					}
-					mut current_program := inner_program.clone()
+					map[string]DataModel {
+						if query_value.len == 0 {
+							// Nothing to do, skip over
+							current = current.jump.next
+							continue
+						}
 
-					// Attach this new expanded section to the joining point
-					join_point.next = list_opener
+						inner_program := clone_linked_list(current.next, current.jump)
 
-					// Attach the inner copy to the expanded section
-					list_opener.next = current_program.head
-					current_program.tail.next = list_closer
+						mut join_point := current
+						for key in query_value.keys() {
+							// New context for expanded map
+							section_name := current.token.content
+							mut map_opener := &Node{
+								token: Token{
+									content: section_name
+									token_type: .expanded_iteration_section
+									key: key
+								}
+							}
+							mut map_closer := &Node{
+								token: Token{
+									content: section_name
+									token_type: .close_section
+								}
+							}
+							mut current_program := inner_program.clone()
 
-					// Connect the list and closer sections by jump points
-					list_closer.jump = list_opener
-					list_opener.jump = list_closer
+							// Attach this new expanded section to the joining point
+							join_point.next = map_opener
 
-					// Now attach the remaining after the new closer
-					join_point = list_closer
+							// Attach the inner copy to the expanded section
+							map_opener.next = current_program.head
+							current_program.tail.next = map_closer
+
+							// Connect the map and closer sections by jump points
+							map_closer.jump = map_opener
+							map_opener.jump = map_closer
+
+							// Now attach the remaining after the new closer
+							join_point = map_closer
+						}
+
+						join_point.next = current.jump
+					}
+					else {
+						return error('Expected a list or map for "${current.token.content}"')
+					}
 				}
-
-				join_point.next = current.jump
 
 				sections.push(Section{
 					name: current.token.content
@@ -368,8 +424,8 @@ pub fn (t Template) run(context DataModel) !string {
 					return error('Expected to close ${last_section.name}, closed ${current.token.content} instead.')
 				}
 				original_section := current.jump
-				if original_section.token.token_type in [.expanded_list_section, .negative_section,
-					.positive_section, .map_section] {
+				if original_section.token.token_type in [.expanded_iteration_section,
+					.negative_section, .positive_section, .map_section] {
 					data_stack.pop()!
 				}
 				current = current.next
