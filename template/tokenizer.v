@@ -27,20 +27,21 @@ enum TokenType {
 	// Map section is activated for every key value pair
 	map_section
 	// List section is activated for every index item pair
-	list_section
+	iteration_section
 	// Close section marks the end of a section
 	close_section
 	// Partials are plugged into the current template
 	partial_section
 	// INTERNAL Program Execution Token
 	// Expanded list sections are associated with only one index of a list
-	expanded_list_section
+	expanded_iteration_section
 }
 
 struct Token {
 	content    string
 	token_type TokenType
 	index      int = -1
+	key        string
 }
 
 fn (token Token) str() string {
@@ -281,7 +282,7 @@ fn extract_tokens(input string) ![]Token {
 			}
 			`*` {
 				Token{
-					token_type: .list_section
+					token_type: .iteration_section
 					content: tag_content[1..].trim_space()
 				}
 			}
