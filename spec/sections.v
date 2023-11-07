@@ -397,5 +397,27 @@ pub const section_test = TestList{
 			template: '{{+map}}Should not render.{{/map}}{{-map}}Should render.{{/map}}'
 			expected: 'Should render.'
 		},
+		TestCase{
+			name: 'Iterating On Maps (Full)'
+			desc: 'Iterating on maps should give access to key-value pairs one at a time.'
+			data: DataModel({
+				'map': DataModel({
+					'one':   DataModel('ONE')
+					'two':   DataModel('TWO')
+					'three': DataModel('THREE')
+				})
+			})
+			template: '{{*map}}{{key}}:{{value}}\n{{/map}}'
+			expected: 'one:ONE\ntwo:TWO\nthree:THREE\n'
+		},
+		TestCase{
+			name: 'Iterating On Maps (Empty)'
+			desc: 'Iterating on empty maps should behave like empty lists.'
+			data: DataModel({
+				'map': DataModel(map[string]DataModel{})
+			})
+			template: '{{*map}}Should not render: {{key}}{{value}}{{/map}}{{-map}}Should render.{{/map}}'
+			expected: 'Should render.'
+		},
 	]
 }
