@@ -20,3 +20,6 @@ scratch
 
 # Ignore generated spec duplicate
 spec/gen
+
+# Ignore generated docs
+_docs
