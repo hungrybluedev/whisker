@@ -9,7 +9,7 @@ struct Section {
 	name string
 }
 
-[heap]
+@[heap]
 struct Node {
 	token Token
 mut:
@@ -24,7 +24,7 @@ fn (node Node) str() string {
 	return '{${node.token}}\n${next}\n${skip}'.trim_space()
 }
 
-[heap]
+@[heap]
 struct Program {
 	len int
 mut:

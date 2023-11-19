@@ -9,9 +9,9 @@ pub:
 	partial_programs map[string]Program
 }
 
-[params]
+@[params]
 pub struct TemplateConfig {
-	input    string            [required]
+	input    string            @[required]
 	partials map[string]string = {}
 }
 
