@@ -1,0 +1,39 @@
+name: GitHub Pages CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          stable: true
+      
+      - name: Checkout ${{ github.event.repository.name }}
+        uses: actions/checkout@v3
+
+      - name: Build the documentation
+        run: v doc -m
+
+      - name: TAR and GZIP the documentation
+        run: |
+          tar \
+          --dereference --hard-dereference \
+          --directory "_docs" \
+          -cvf "$RUNNER_TEMP/github-pages.tar" \
+          --exclude=.git \
+          --exclude=.github \
+          .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "github-pages"
+          path: ${{ runner.temp }}/github-pages.tar
+          if-no-files-found: error
