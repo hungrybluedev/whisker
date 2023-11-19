@@ -39,3 +39,29 @@ jobs:
         run: |
           v cmd/whisker -o cmd/bin/whisker
           cmd/bin/whisker --help
+
+  package-vpm:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          stable: true
+
+      - name: Install from VPM
+        run: |
+          v install hungrybluedev.whisker
+
+  package-github:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          stable: true
+
+      - name: Install from GitHub
+        run: |
+          v install --git https://github.com/hungrybluedev/whisker
