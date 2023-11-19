@@ -14,12 +14,12 @@ jobs:
         uses: vlang/setup-v@v1.3
         with:
           stable: true
-      
+
       - name: Checkout ${{ github.event.repository.name }}
         uses: actions/checkout@v3
 
       - name: Build the documentation
-        run: v doc -m
+        run: v doc -m -readme -f html .
 
       - name: TAR and GZIP the documentation
         run: |
