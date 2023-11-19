@@ -38,7 +38,6 @@ The following blog posts provide more context:
    We show how we use fundamental CS principles to implement an FSM-based
    tokeniser for whisker.
 
-
 ## Prerequisites
 
 You must have V installed. Refer to
@@ -58,7 +57,7 @@ v install hungrybluedev.whisker
 
 This should install the package as the `hungrybluedev.whisker` module.
 
-To use it, use `impport hungrybluedev.whisker` and proceed as normal.
+To use it, use `import hungrybluedev.whisker` and proceed as normal.
 
 ### From GitHub
 
@@ -232,18 +231,16 @@ fn main() {
 #### Input
 
 ```html
-
 <nav>
-    <ul>
-        <li>Home</li>
-        <li>About</li>
-        {{-logged_in}}
-        <li>Log In</li>
-        {{/logged_in}}
-        {{+logged_in}}
-        <li>Account: {{user.name}}</li>
-        {{/logged_in}}
-    </ul>
+  <ul>
+    <li>Home</li>
+    <li>About</li>
+    {{-logged_in}}
+    <li>Log In</li>
+    {{/logged_in}} {{+logged_in}}
+    <li>Account: {{user.name}}</li>
+    {{/logged_in}}
+  </ul>
 </nav>
 ```
 
@@ -258,14 +255,12 @@ fn main() {
 #### Output 1
 
 ```html
-
 <nav>
-    <ul>
-        <li>Home</li>
-        <li>About</li>
-        <li>Log In</li>
-
-    </ul>
+  <ul>
+    <li>Home</li>
+    <li>About</li>
+    <li>Log In</li>
+  </ul>
 </nav>
 ```
 
@@ -283,14 +278,13 @@ fn main() {
 #### Output 2
 
 ```html
-
 <nav>
-    <ul>
-        <li>Home</li>
-        <li>About</li>
+  <ul>
+    <li>Home</li>
+    <li>About</li>
 
-        <li>Account: whisker</li>
-    </ul>
+    <li>Account: whisker</li>
+  </ul>
 </nav>
 ```
 
@@ -301,16 +295,14 @@ fn main() {
 #### Input
 
 ```html
-
 {{+vacation}}
-<h1>Currenty on vacation</h1>
+<h1>Currently on vacation</h1>
 <ul>
-{{*.}}
-<li>{{.}}</li>
-{{/.}}
+  {{*.}}
+  <li>{{.}}</li>
+  {{/.}}
 </ul>
-{{/vacation}}
-{{-vacation}}
+{{/vacation}} {{-vacation}}
 <p>Nobody is on vacation currently</p>
 {{/vacation}}
 ```
@@ -340,10 +332,10 @@ fn main() {
 #### Output 2
 
 ```html
-<h1>Currenty on vacation</h1>
+<h1>Currently on vacation</h1>
 <ul>
-<li>Homer</li>
-<li>Marge</li>
+  <li>Homer</li>
+  <li>Marge</li>
 </ul>
 ```
 
@@ -365,7 +357,7 @@ fn main() {
 
 ```json
 {
-    "user" : {}
+  "user": {}
 }
 ```
 
@@ -379,10 +371,10 @@ fn main() {
 
 ```json
 {
-    "user" : {
-        "last_name": "Simpson", 
-        "first_name": "Homer"
-    }
+  "user": {
+    "last_name": "Simpson",
+    "first_name": "Homer"
+  }
 }
 ```
 
@@ -392,23 +384,51 @@ fn main() {
 <p>Welcome Simpson, Homer</h1>
 ```
 
+**Map Iteration:**
+
+#### Input
+
+```html
+<ul>
+  {{*user}}
+  <li>{{key}}: {{value}}</li>
+  {{/user}}
+</ul>
+```
+
+#### Data
+
+```json
+{
+  "user": {
+    "First Name": "Homer",
+    "Last Name": "Simpson"
+  }
+}
+```
+
+#### Output
+
+```html
+<ul>
+<li>First Name: Homer</li>
+<li>Last Name: Simpson</li>
+</ul>
+```
+
 ### Maps, Lists, and Partials
 
 #### Input
 
 ```html
-
 <ol>
-    {{*items}}
-    {{>item}}
-    {{/items}}
+  {{*items}} {{>item}} {{/items}}
 </ol>
 ```
 
 #### Partial: item
 
 ```html
-
 <li>{{name}}: {{description}}</li>
 ```
 
@@ -432,10 +452,9 @@ fn main() {
 #### Output
 
 ```html
-
 <ol>
-    <li>Banana: Rich in potassium and naturally sweet.</li>
-    <li>Orange: High in Vitamin C and very refreshing.</li>
+  <li>Banana: Rich in potassium and naturally sweet.</li>
+  <li>Orange: High in Vitamin C and very refreshing.</li>
 </ol>
 ```
 
@@ -450,15 +469,10 @@ the [`spec`](spec) directory.
 This project is distributed under the [MIT License](LICENSE).
 
 [workflow_badge]: https://github.com/hungrybluedev/whisker/actions/workflows/main.yml/badge.svg
-
 [license_badge]: https://img.shields.io/badge/License-MIT-blue.svg
-
 [workflow_url]: https://github.com/hungrybluedev/whisker/actions/workflows/main.yml
-
 [license_url]: https://github.com/hungrybluedev/whisker/blob/main/LICENSE
-
 [git_tag_url]: https://github.com/hungrybluedev/whisker/tags
-
 [git_tag_badge]: https://img.shields.io/github/v/tag/hungrybluedev/whisker?color=purple&include_prereleases&sort=semver
 
 ## Acknowledgements
