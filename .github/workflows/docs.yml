@@ -2,7 +2,7 @@ name: GitHub Pages CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -37,3 +37,7 @@ jobs:
           name: "github-pages"
           path: ${{ runner.temp }}/github-pages.tar
           if-no-files-found: error
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
