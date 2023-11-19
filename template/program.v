@@ -162,6 +162,7 @@ fn clone_linked_list(head &Node, sentinel &Node) Program {
 	}
 }
 
+// run renders the template with the given DataModel context.
 pub fn (t Template) run(context DataModel) !string {
 	mut main_program := t.program.clone()
 
