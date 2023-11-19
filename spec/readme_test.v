@@ -112,7 +112,7 @@ fn test_boolean_positive_negative_sections() {
 fn test_list_positive_negative_sections() {
 	input := '
 	{{+vacation}}
-	<h1>Currenty on vacation</h1>
+	<h1>Currently on vacation</h1>
 	<ul>
 	{{*.}}
 	<li>{{.}}</li>
@@ -138,7 +138,7 @@ fn test_list_positive_negative_sections() {
 
 		'.trim_indent(),
 		'
-		<h1>Currenty on vacation</h1>
+		<h1>Currently on vacation</h1>
 		<ul>
 		<li>Homer</li>
 		<li>Marge</li>
@@ -152,6 +152,31 @@ fn test_list_positive_negative_sections() {
 	for index, data in data_list {
 		assert section_template.run(data)! == outputs[index]
 	}
+}
+
+fn test_map_key_value_iteration() {
+	input := '
+	<ul>
+	{{*user}}
+	<li>{{key}}: {{value}}</li>
+	{{/user}}
+	</ul>
+	'.trim_indent()
+	data := datamodel.from_json('{
+		"user": {
+		  "First Name": "Homer",
+		  "Last Name": "Simpson"
+		}
+	}')!
+
+	section_template := template.from_strings(input: input)!
+
+	assert section_template.run(data)! == '
+	<ul>
+	<li>First Name: Homer</li>
+	<li>Last Name: Simpson</li>
+	</ul>
+	'.trim_indent()
 }
 
 fn test_map_positive_negative_sections() {
@@ -169,7 +194,7 @@ fn test_map_positive_negative_sections() {
 		}')!,
 		datamodel.from_json('{
 		"user" : {
-		  	"last_name": "Simpson", 
+		  	"last_name": "Simpson",
 		  	"first_name": "Homer"
 		}
 		}')!,
