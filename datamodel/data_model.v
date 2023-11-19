@@ -4,8 +4,11 @@ import x.json2
 
 const data_indent = '\t'
 
+// DataModel describes the data types and structures that are supported
+// by _whisker_.
 pub type DataModel = []DataModel | bool | map[string]DataModel | string
 
+// clone returns an independent, deep copy of the data model.
 pub fn (data DataModel) clone() DataModel {
 	return match data {
 		bool {
@@ -23,6 +26,7 @@ pub fn (data DataModel) clone() DataModel {
 	}
 }
 
+// str returns a string representation of the data model.
 pub fn (data DataModel) str() string {
 	result_node := data.to_json_node() or { json2.null }
 	result := result_node.prettify_json_str()
@@ -33,10 +37,12 @@ pub fn (data DataModel) str() string {
 	}
 }
 
+// json_str returns a JSON string representation of the data model.
 pub fn (data DataModel) json_str() string {
 	return data.str()
 }
 
+// to_json_node returns a JSON node representation of the data model.
 fn (data DataModel) to_json_node() !json2.Any {
 	return match data {
 		bool, string {
@@ -59,6 +65,7 @@ fn (data DataModel) to_json_node() !json2.Any {
 	}
 }
 
+// from_json returns a DataModel from a valid JSON string.
 pub fn from_json(input string) !DataModel {
 	root := json2.raw_decode(input)!
 	value := recursive_decode(root)!
