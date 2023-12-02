@@ -3,12 +3,10 @@ module template
 import strings
 import math { abs }
 
-const (
-	default_start_delimiter = '{{'
-	default_end_delimiter   = '}}'
+const default_start_delimiter = '{{'
+const default_end_delimiter = '}}'
 
-	default_content_size    = 16
-)
+const default_content_size = 16
 
 enum TokenType {
 	// Normal tokens appear verbatim in the final result

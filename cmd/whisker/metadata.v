@@ -2,19 +2,16 @@ module main
 
 import v.vmod
 
-const (
-	embedded_vmod = $embed_file('v.mod', .zlib)
-	manifest      = vmod.decode(embedded_vmod.to_string()) or {
-		eprintln('Could not decode the v.mod file. Please restore to original state.')
-		exit(1)
-	}
-)
+const embedded_vmod = $embed_file('v.mod', .zlib)
+const manifest = vmod.decode(embedded_vmod.to_string()) or {
+	eprintln('Could not decode the v.mod file. Please restore to original state.')
+	exit(1)
+}
 
-pub const (
-	version      = manifest.version
-	app_name     = manifest.name
-	description  = manifest.description
-	instructions = '
+pub const version = manifest.version
+pub const app_name = manifest.name
+pub const description = manifest.description
+pub const instructions = '
 whisker can operate on template strings stored in *.wskr.[html/json/*] template
 files for storing inputs. This also applies for partial templates.
 There is no strict requirement on file names and extensions, by having "wskr"
@@ -34,4 +31,3 @@ whisker --input base.wskr.html --partials "head:head.wskr.html,main:main templat
 
 Do not use spaces after the commas. Spaces are allowed for file names.
 '
-)
