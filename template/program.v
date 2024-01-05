@@ -433,12 +433,12 @@ pub fn (t Template) run(context DataModel) !string {
 			}
 			.partial_section {
 				name := current.token.content.trim_space()
-				if name !in t.partial_programs {
+				extracted_program := t.partial_programs[name] or {
 					return error('No partial found named "${name}"')
 				}
 				next := current.next
 
-				mut replacement := t.partial_programs[name].clone()
+				mut replacement := extracted_program.clone()
 				replacement.tail.next = next
 
 				current = replacement.head
