@@ -2,7 +2,6 @@ module main
 
 import spec
 import os
-import x.json2
 import template
 import datamodel
 
@@ -35,7 +34,7 @@ fn generate_json_files() ! {
 
 	for suite in spec_test_suites {
 		for test in suite.tests {
-			json_string := json2.encode_pretty(test.data)
+			json_string := test.data.str()
 
 			os.mkdir('spec/gen/${suite.name}') or {}
 			os.write_file('spec/gen/${suite.name}/${test.name}.wskr.json', json_string)!
