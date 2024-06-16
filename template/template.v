@@ -13,6 +13,7 @@ pub:
 // TemplateConfig is the configuration struct for a template.
 @[params]
 pub struct TemplateConfig {
+pub:
 	input    string            @[required]
 	partials map[string]string = {}
 }
